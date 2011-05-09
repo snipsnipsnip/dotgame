@@ -1,11 +1,9 @@
 
-main(100, 100) {
-  text "HOGE\nFUGA\nMOGA", 10, 10
-  text 100
-  
-  image "hoge.png", 50, 50, 5
-  
-  if leftclick?
-    playse "ok.wav"
-  end
+t = 0
+
+main() {
+  t += akey? ? -0.2 : 0.1
+  x = cos(t) * 5 + 10
+  y = sin(t) * 5 + 10
+  dot x, y
 }

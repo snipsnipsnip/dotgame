@@ -281,28 +281,9 @@ def space?
 end
 
 # アルファベット各種
-def zkey?
-  key?(:z)
-end
-
-def xkey?
-  key?(:x)
-end
-
-def ckey?
-  key?(:c)
-end
-
-def vkey?
-  key?(:v)
-end
-
-def akey?
-  key?(:a)
-end
-
-def skey?
-  key?(:s)
+('a'..'z').each do |c|
+  s = c.to_sym
+  define_method("#{c}key?") { key? s }
 end
 
 # 矢印
@@ -420,12 +401,12 @@ end
 
 # 本体 #
 
-def main(w=20, h=20, fps=30)
+def main(w=20, h=20, title="", fps=30)
   bg = StarRuby::Texture.new(w, h)
   raster(bg) do |x,y|
     bg[x, y] = (x + y).odd? ? white : gray
   end
-  StarRuby::Game.run(w, h, :window_scale => [600.0 / [w, h].max, 1].max, :cursor => true, :fps => fps) do |game|
+  StarRuby::Game.run(w, h, :title => title, :window_scale => [600.0 / [w, h].max, 1].max, :cursor => true, :fps => fps) do |game|
     game.screen.render_texture(bg, 0, 0)
     yield
   end
