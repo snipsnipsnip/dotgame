@@ -415,11 +415,14 @@ end
 end
 
 if __FILE__ == $0
-  if File.exist?('main.txt')
-    include DotGame
-    load 'main.txt'
-  else
-    require 'Win32API'
-    Win32API.new('user32', 'MessageBox', %w(p p p i), 'i').call(0, "\202\261\202\314\203t\203@\203C\203\213\202\306\223\257\202\266\202\306\202\261\202\353\202\311main.txt\202\360\222u\202\242\202\304\202\255\202\276\202\263\202\242\n\223\340\227e\202\315\210\310\211\272\202\314\222\312\202\350\202\305\202\267\n\nmain() {\n}\n\n\217\332\202\265\202\242\211\360\220\340\202\315\210\310\211\272\202\314\203T\203C\203g\202\305\202\307\202\244\202\274\n  http://m-creator.vbl.oita-u.ac.jp/kodama/moin/dotgame/\n", "dotgame", 0)
+  unless File.exist?('main.txt')
+    open('main.txt', 'w') do |f|
+      f.puts 'main() {'
+      f.puts '  text "HOGE"'
+      f.puts '}'
+    end
   end
+    
+  include DotGame
+  load 'main.txt'
 end
