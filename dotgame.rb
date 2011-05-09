@@ -2,10 +2,11 @@
 # https://gist.github.com/962107
 
 require 'starruby'
+require 'kconv'
 
 module DotGame
 
-VERSION = "0.0.3"
+VERSION = "0.0.4"
 
 include Math
 
@@ -403,12 +404,13 @@ end
 
 def main(w=20, h=20, title="", fps=30)
   bg = StarRuby::Texture.new(w, h)
+  bg.fill(white)
   raster(bg) do |x,y|
-    bg[x, y] = (x + y).odd? ? white : gray
+    bg[x, y] = gray if (x + y).odd?
   end
-  StarRuby::Game.run(w, h, :title => title, :window_scale => [600.0 / [w, h].max, 1].max, :cursor => true, :fps => fps) do |game|
+  StarRuby::Game.run(w, h, { :title => title, :window_scale => [600.0 / [w, h].max, 1].max, :cursor => true, :fps => fps }) do |game|
     game.screen.render_texture(bg, 0, 0)
-    yield
+    yield game
   end
 end
 
@@ -424,5 +426,31 @@ if __FILE__ == $0
   end
     
   include DotGame
-  load 'main.txt'
+  begin
+    load 'main.txt'
+  rescue Exception => e
+    font = StarRuby::Font.new('MS Gothic', 20)
+    lines = ["error: #{e.class}", nil, "message:", e.message, nil, "stack trace:", nil] + e.backtrace
+    warn lines.join("\n")
+    
+    x = y = 10
+    main(640, 480, "dotgame error") do |game|
+      break if key?(:escape)
+    
+      lines.each_with_index do |line, i|
+        next unless line
+        game.screen.render_text(line.toutf8, x, y + i * 20, font, black, true)
+      end
+      
+      cx, cy = screenw / 2, screenh / 2
+      mx, my = mouse
+      mx -= cx
+      my -= cy
+      x += mx / 30.0
+      y += my / 30.0
+      line cx, cy, mousex, mousey, red
+      
+      x = y = 10 if leftmouse?
+    end
+  end
 end
