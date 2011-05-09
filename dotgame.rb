@@ -1,4 +1,5 @@
 # dotgame r1
+# https://gist.github.com/962107
 
 require 'starruby'
 
