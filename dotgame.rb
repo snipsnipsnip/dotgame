@@ -438,31 +438,5 @@ if __FILE__ == $0
   end
     
   include DotGame
-  begin
-    load 'main.txt'
-  rescue Exception => e
-    font = StarRuby::Font.new('MS Gothic', 20)
-    lines = ["error: #{e.class}", nil, "message:", e.message, nil, "stack trace:", nil] + e.backtrace
-    warn lines.join("\n")
-    
-    x = y = 10
-    main(640, 480, "dotgame error") do |game|
-      break if key?(:escape)
-    
-      lines.each_with_index do |line, i|
-        next unless line
-        game.screen.render_text(line.toutf8, x, y + i * 20, font, black, true)
-      end
-      
-      cx, cy = screenw / 2, screenh / 2
-      mx, my = mouse
-      mx -= cx
-      my -= cy
-      x += mx / 30.0
-      y += my / 30.0
-      line cx, cy, mousex, mousey, red
-      
-      x = y = 10 if leftmouse?
-    end
-  end
+  load 'main.txt'
 end
