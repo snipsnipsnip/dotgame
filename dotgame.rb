@@ -2,6 +2,7 @@
 # https://gist.github.com/962107
 
 require 'starruby'
+require 'kconv'
 
 module DotGame
 
@@ -352,7 +353,12 @@ end
 
 # 起動からのミリ秒
 def time
-  StarRuby::Game.current.ticks
+  StarRuby::Game.ticks
+end
+
+# タイトルバーの文字列を設定
+def title(t)
+  StarRuby::Game.current.title = (t.is_a?(Array) ? t.inspect : t.to_s).toutf8
 end
 
 # マウス座標をいっぺんに取り出す
@@ -426,7 +432,13 @@ def screenh
 end
 
 # 本体 #
-def main(w=20, h=20, fps=30, title="F5キーでリロード - dotgame v#{DotGame::VERSION}")
+def main(w=20, h=20, fps=30, title=nil)
+  if title
+    title = title.to_s.toutf8
+  else
+    title = "F5キーでリロード - dotgame v#{DotGame::VERSION}"
+  end
+  
   bg = StarRuby::Texture.new(w, h)
   bg.fill(white)
   raster(bg) do |x,y|
