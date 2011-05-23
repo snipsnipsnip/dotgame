@@ -350,6 +350,11 @@ def reload
   throw :dotgame_reload, true
 end
 
+# 起動からのミリ秒
+def time
+  StarRuby::Game.current.ticks
+end
+
 # マウス座標をいっぺんに取り出す
 # 例: x, y = mouse
 def mouse
