@@ -2,15 +2,14 @@
 # https://gist.github.com/962107
 
 require 'starruby'
-require 'kconv'
 
 module DotGame
 
-VERSION = "0.0.4"
+VERSION = "0.0.5"
 
 include Math
 
-# F #
+# è‰² #
 
 def white
   Color(255, 255, 255)
@@ -40,17 +39,17 @@ def yellow
   Color(255, 255, 0)
 end
 
-# •`‰æ #
+# æç”» #
 
-# “_‚ğ‘Å‚Â
+# ç‚¹ã‚’æ‰“ã¤
 #
-# ‘®F
-#   dot XÀ•W, YÀ•W
-#   dot XÀ•W, YÀ•W, F‚Ì–¼‘O (red, blue, green..)
-#   dot XÀ•W, YÀ•W, F‚Ì”Z‚³ (0`255)
-#   dot XÀ•W, YÀ•W, R, G, B
+# æ›¸å¼ï¼š
+#   dot Xåº§æ¨™, Yåº§æ¨™
+#   dot Xåº§æ¨™, Yåº§æ¨™, è‰²ã®åå‰ (red, blue, green..)
+#   dot Xåº§æ¨™, Yåº§æ¨™, è‰²ã®æ¿ƒã• (0ï½255)
+#   dot Xåº§æ¨™, Yåº§æ¨™, R, G, B
 #
-# —áF
+# ä¾‹ï¼š
 #   dot 10, 10
 #   dot 3, 3
 #   dot 10, 10, 50
@@ -60,43 +59,43 @@ def dot(x, y, r=0, g=nil, b=nil, a=255, s=StarRuby::Game.current.screen)
   s.render_pixel x, y, color
 end
 
-# ü‚ğˆø‚­
+# ç·šã‚’å¼•ã
 #
-# ‘®F
-#   line ‚à‚Æ‚ÌXÀ•W, ‚à‚Æ‚ÌYÀ•W, æ‚ÌXÀ•W, æ‚ÌYÀ•W
-#   line ‚à‚Æ‚ÌXÀ•W, ‚à‚Æ‚ÌYÀ•W, æ‚ÌXÀ•W, æ‚ÌYÀ•W
-#   line ‚à‚Æ‚ÌXÀ•W, ‚à‚Æ‚ÌYÀ•W, æ‚ÌXÀ•W, æ‚ÌYÀ•W, F‚Ì–¼‘O (red, blue, green..)
-#   line ‚à‚Æ‚ÌXÀ•W, ‚à‚Æ‚ÌYÀ•W, æ‚ÌXÀ•W, æ‚ÌYÀ•W, F‚Ì”Z‚³ (0`255)
-#   line ‚à‚Æ‚ÌXÀ•W, ‚à‚Æ‚ÌYÀ•W, æ‚ÌXÀ•W, æ‚ÌYÀ•W, R, G, B
+# æ›¸å¼ï¼š
+#   line ã‚‚ã¨ã®Xåº§æ¨™, ã‚‚ã¨ã®Yåº§æ¨™, å…ˆã®Xåº§æ¨™, å…ˆã®Yåº§æ¨™
+#   line ã‚‚ã¨ã®Xåº§æ¨™, ã‚‚ã¨ã®Yåº§æ¨™, å…ˆã®Xåº§æ¨™, å…ˆã®Yåº§æ¨™
+#   line ã‚‚ã¨ã®Xåº§æ¨™, ã‚‚ã¨ã®Yåº§æ¨™, å…ˆã®Xåº§æ¨™, å…ˆã®Yåº§æ¨™, è‰²ã®åå‰ (red, blue, green..)
+#   line ã‚‚ã¨ã®Xåº§æ¨™, ã‚‚ã¨ã®Yåº§æ¨™, å…ˆã®Xåº§æ¨™, å…ˆã®Yåº§æ¨™, è‰²ã®æ¿ƒã• (0ï½255)
+#   line ã‚‚ã¨ã®Xåº§æ¨™, ã‚‚ã¨ã®Yåº§æ¨™, å…ˆã®Xåº§æ¨™, å…ˆã®Yåº§æ¨™, R, G, B
 #
-# —áF
+# ä¾‹ï¼š
 #   line 10, 10, 50, 200, red
 def line(x1, y1, x2, y2, r=0, g=nil, b=nil, a=255, s=StarRuby::Game.current.screen)
   color = r.is_a?(StarRuby::Color) ? r : Color(r, g || r, b || r, a)
   s.render_line x1, y1, x2, y2, color
 end
 
-# ü‚ğˆø‚­
+# ç·šã‚’å¼•ã
 #
-# ‘®F
-#   square ¶ã‚ÌXÀ•W, ¶ã‚ÌYÀ•W, ‰¡•, c•
+# æ›¸å¼ï¼š
+#   square å·¦ä¸Šã®Xåº§æ¨™, å·¦ä¸Šã®Yåº§æ¨™, æ¨ªå¹…, ç¸¦å¹…
 #
-# —áF
+# ä¾‹ï¼š
 #   square 10, 10, 5, 5, blue
 def square(x, y, w, h, r=0, g=nil, b=nil, a=255, s=StarRuby::Game.current.screen)
   color = r.is_a?(StarRuby::Color) ? r : Color(r, g || r, b || r, a)
   s.render_rect x, y, w, h, color
 end
 
-# ‰æ‘œ‚ğ’£‚è•t‚¯‚é
-# ƒtƒHƒ‹ƒ_‰z‚µ‚Éw’è‚·‚éê‡ \ ‚Å‚Í‚È‚­ / ‚ğg‚¤‚±‚Æ
+# ç”»åƒã‚’å¼µã‚Šä»˜ã‘ã‚‹
+# ãƒ•ã‚©ãƒ«ãƒ€è¶Šã—ã«æŒ‡å®šã™ã‚‹å ´åˆ \ ã§ã¯ãªã / ã‚’ä½¿ã†ã“ã¨
 #
-# ‘®F
-#   image "ƒtƒ@ƒCƒ‹–¼"
-#   image "ƒtƒ@ƒCƒ‹–¼", ¶ã‚ÌXÀ•W, ¶ã‚ÌYÀ•W
-#   image "ƒtƒ@ƒCƒ‹–¼", ¶ã‚ÌXÀ•W, ¶ã‚ÌYÀ•W, ”{—¦
+# æ›¸å¼ï¼š
+#   image "ãƒ•ã‚¡ã‚¤ãƒ«å"
+#   image "ãƒ•ã‚¡ã‚¤ãƒ«å", å·¦ä¸Šã®Xåº§æ¨™, å·¦ä¸Šã®Yåº§æ¨™
+#   image "ãƒ•ã‚¡ã‚¤ãƒ«å", å·¦ä¸Šã®Xåº§æ¨™, å·¦ä¸Šã®Yåº§æ¨™, å€ç‡
 #
-# —áF
+# ä¾‹ï¼š
 #   image "neko.bmp"
 #   image "c:/tree.gif", 5, 5
 #   image "c:/face.png", 3, 3, 2
@@ -109,23 +108,39 @@ def image(name, x=0, y=0, scale=nil, s=StarRuby::Game.current.screen)
   end
 end
 
+def imagew(name)
+  if t = name.is_a?(String) ? DotGame.get_texture(name) : name
+    t.width
+  else
+    warn "\211\346\221\234 '#{name}' \202\252\223\307\202\335\215\236\202\337\202\334\202\271\202\361\202\305\202\265\202\275"
+  end
+end
+
+def imageh(name)
+  if t = name.is_a?(String) ? DotGame.get_texture(name) : name
+    t.width
+  else
+    warn "\211\346\221\234 '#{name}' \202\252\223\307\202\335\215\236\202\337\202\334\202\271\202\361\202\305\202\265\202\275"
+  end
+end
+
 def self.get_texture(name)
   @_textures ||= {}
   @_textures[name] ||= StarRuby::Texture.load(name)
 end
 
-# ‰p”š‚ğ‘‚­
+# è‹±æ•°å­—ã‚’æ›¸ã
 #
-# ‘®F
-#   text •Ï”–¼
-#   text ”’l
-#   text "ƒƒbƒZ[ƒW"
-#   text "ƒƒbƒZ[ƒW", ¶ã‚ÌXÀ•W, ¶ã‚ÌYÀ•W
-#   text "ƒƒbƒZ[ƒW", ¶ã‚ÌXÀ•W, ¶ã‚ÌYÀ•W, F‚Ì–¼‘O (red, blue, green..)
-#   text "ƒƒbƒZ[ƒW", ¶ã‚ÌXÀ•W, ¶ã‚ÌYÀ•W, F‚Ì”Z‚³ (0`255)
-#   text "ƒƒbƒZ[ƒW", ¶ã‚ÌXÀ•W, ¶ã‚ÌYÀ•W, R, G, B
+# æ›¸å¼ï¼š
+#   text å¤‰æ•°å
+#   text æ•°å€¤
+#   text "ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸"
+#   text "ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸", å·¦ä¸Šã®Xåº§æ¨™, å·¦ä¸Šã®Yåº§æ¨™
+#   text "ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸", å·¦ä¸Šã®Xåº§æ¨™, å·¦ä¸Šã®Yåº§æ¨™, è‰²ã®åå‰ (red, blue, green..)
+#   text "ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸", å·¦ä¸Šã®Xåº§æ¨™, å·¦ä¸Šã®Yåº§æ¨™, è‰²ã®æ¿ƒã• (0ï½255)
+#   text "ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸", å·¦ä¸Šã®Xåº§æ¨™, å·¦ä¸Šã®Yåº§æ¨™, R, G, B
 #
-# —áF
+# ä¾‹ï¼š
 #   text 100
 #   text "hoge"
 #   text "hoge", 5, 5
@@ -143,7 +158,7 @@ def text(msg, x=0, y=0, r=0, g=nil, b=nil, a=255, s=StarRuby::Game.current.scree
   end
 end
 
-# ƒtƒ`‚Â‚«text
+# ãƒ•ãƒã¤ãtext
 def textbold(msg, x=0, y=0, inner=white, outer=black, s=StarRuby::Game.current.screen)
   x += 1
   y += 1
@@ -228,18 +243,18 @@ def self.draw_letter_bold(screen, x, y, c, inner, outer)
   end
 end
 
-# ‰¹ #
+# éŸ³ #
 
-# Œø‰Ê‰¹‚ğ–Â‚ç‚·
-# ”’l‚ğw’è‚·‚é‚ÆÄ¶‚ğ~‚ß‚é
+# åŠ¹æœéŸ³ã‚’é³´ã‚‰ã™
+# æ•°å€¤ã‚’æŒ‡å®šã™ã‚‹ã¨å†ç”Ÿã‚’æ­¢ã‚ã‚‹
 #
-# ‘®F
-#   playse ƒtƒF[ƒhƒAƒEƒgŠÔ
-#   playse "ƒtƒ@ƒCƒ‹–¼"
-#   playse "ƒtƒ@ƒCƒ‹–¼", ‰¹—Ê (0`255)
-#   playse "ƒtƒ@ƒCƒ‹–¼", ‰¹—Ê (0`255), ƒpƒ“ (-255`255)
+# æ›¸å¼ï¼š
+#   playse ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¢ã‚¦ãƒˆæ™‚é–“
+#   playse "ãƒ•ã‚¡ã‚¤ãƒ«å"
+#   playse "ãƒ•ã‚¡ã‚¤ãƒ«å", éŸ³é‡ (0ï½255)
+#   playse "ãƒ•ã‚¡ã‚¤ãƒ«å", éŸ³é‡ (0ï½255), ãƒ‘ãƒ³ (-255ï½255)
 #
-# —áF
+# ä¾‹ï¼š
 #   playse "cluck.wav"
 #   playse "dump.ogg"
 def playse(name, vol=nil, pan=nil)
@@ -251,16 +266,16 @@ def playse(name, vol=nil, pan=nil)
   end
 end
 
-# BGM‚ğ–Â‚ç‚·
-# ”’l‚ğw’è‚·‚é‚ÆÄ¶‚ğ~‚ß‚é
+# BGMã‚’é³´ã‚‰ã™
+# æ•°å€¤ã‚’æŒ‡å®šã™ã‚‹ã¨å†ç”Ÿã‚’æ­¢ã‚ã‚‹
 #
-# ‘®F
-#   playbgm ƒtƒF[ƒhƒAƒEƒgŠÔ (ƒ~ƒŠ•b)
-#   playbgm "ƒtƒ@ƒCƒ‹–¼"
-#   playbgm "ƒtƒ@ƒCƒ‹–¼", ‰¹—Ê (0`255)
-#   playbgm "ƒtƒ@ƒCƒ‹–¼", ‰¹—Ê (0`255), ƒtƒF[ƒhƒCƒ“ŠÔ (ƒ~ƒŠ•b)
+# æ›¸å¼ï¼š
+#   playbgm ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¢ã‚¦ãƒˆæ™‚é–“ (ãƒŸãƒªç§’)
+#   playbgm "ãƒ•ã‚¡ã‚¤ãƒ«å"
+#   playbgm "ãƒ•ã‚¡ã‚¤ãƒ«å", éŸ³é‡ (0ï½255)
+#   playbgm "ãƒ•ã‚¡ã‚¤ãƒ«å", éŸ³é‡ (0ï½255), ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¤ãƒ³æ™‚é–“ (ãƒŸãƒªç§’)
 #
-# —áF
+# ä¾‹ï¼š
 #   playbgm "steelpython.ogg"
 #   playbgm "discretemusic.ogg", 50
 #   playbgm "landau.ogg", 255, 10000
@@ -274,20 +289,20 @@ def playbgm(name, volume=255, fadein=0)
   end
 end
 
-# “ü—Í‚Æ‚© #
+# å…¥åŠ›ã¨ã‹ #
 
-# ƒXƒy[ƒXƒL[
+# ã‚¹ãƒšãƒ¼ã‚¹ã‚­ãƒ¼
 def space?
   key?(:space)
 end
 
-# ƒAƒ‹ƒtƒ@ƒxƒbƒgŠeí
+# ã‚¢ãƒ«ãƒ•ã‚¡ãƒ™ãƒƒãƒˆå„ç¨®
 ('a'..'z').each do |c|
   s = c.to_sym
   define_method("#{c}key?") { key? s }
 end
 
-# –îˆó
+# çŸ¢å°
 def left?
   key?(:left)
 end
@@ -328,33 +343,38 @@ def mousey
   mouse[1]
 end
 
-# Šµ‚ê‚Ä‚«‚½‚çg‚¤—p #
+# æ…£ã‚Œã¦ããŸã‚‰ä½¿ã†ç”¨ #
 
-# ƒ}ƒEƒXÀ•W‚ğ‚¢‚Á‚Ø‚ñ‚Éæ‚èo‚·
-# —á: x, y = mouse
+# å†èµ·å‹•
+def reload
+  throw :dotgame_reload, true
+end
+
+# ãƒã‚¦ã‚¹åº§æ¨™ã‚’ã„ã£ãºã‚“ã«å–ã‚Šå‡ºã™
+# ä¾‹: x, y = mouse
 def mouse
   StarRuby::Input.mouse_location
 end
 
-# F‚ğì‚é
-# —á: yellow = Color(255, 255, 0)
+# è‰²ã‚’ä½œã‚‹
+# ä¾‹: yellow = Color(255, 255, 0)
 def Color(r, g, b, a=255)
   StarRuby::Color.new(r, g, b, a)
 end
 
-# ƒL[‚ª‰Ÿ‚³‚ê‚Ä‚éÅ’†‚È‚çtrueA‚Å‚È‚¯‚ê‚Îfalse
-# —á:
+# ã‚­ãƒ¼ãŒæŠ¼ã•ã‚Œã¦ã‚‹æœ€ä¸­ãªã‚‰trueã€ã§ãªã‘ã‚Œã°false
+# ä¾‹:
 #   if key?(:z)
-#     # Zƒ{ƒ^ƒ“‰Ÿ‚µ‚Ä‚é‚Ìˆ—
+#     # Zãƒœã‚¿ãƒ³æŠ¼ã—ã¦ã‚‹æ™‚ã®å‡¦ç†
 #   end
 def key?(key, device=:keyboard)
   StarRuby::Input.keys(device).include?(key)
 end
 
-# ƒL[‚ª•ú‚³‚ê‚½uŠÔ‚È‚çtrueA‚Å‚È‚¯‚ê‚Îfalse
-# —á:
+# ã‚­ãƒ¼ãŒæ”¾ã•ã‚ŒãŸç¬é–“ãªã‚‰trueã€ã§ãªã‘ã‚Œã°false
+# ä¾‹:
 #   if click?(:left, :mouse)
-#     # Zƒ{ƒ^ƒ“‚ª—£‚³‚ê‚½uŠÔ‚¾‚¯‚Ìˆ—
+#     # Zãƒœã‚¿ãƒ³ãŒé›¢ã•ã‚ŒãŸç¬é–“ã ã‘ã®å‡¦ç†
 #   end
 def click?(key, device=:keyboard)
   new = key?(key, device)
@@ -369,8 +389,8 @@ def self._click_state(key, new)
   old
 end
 
-# ‘S‰æ–Êˆê‹C‚É•`‰æ‚·‚é
-# —á:
+# å…¨ç”»é¢ä¸€æ°—ã«æç”»ã™ã‚‹
+# ä¾‹:
 #   raster do |x, y|
 #     if x + y % 2 == 0
 #       gray
@@ -400,8 +420,8 @@ def screenh
   screen.height
 end
 
-# –{‘Ì #
-def main(w=20, h=20, title="", fps=30)
+# æœ¬ä½“ #
+def main(w=20, h=20, fps=30, title="F5ã‚­ãƒ¼ã§ãƒªãƒ­ãƒ¼ãƒ‰ - dotgame v#{DotGame::VERSION}")
   bg = StarRuby::Texture.new(w, h)
   bg.fill(white)
   raster(bg) do |x,y|
@@ -415,13 +435,17 @@ def main(w=20, h=20, title="", fps=30)
       game.window_scale -= 1
     elsif keys.include?(:f11) || keys.include?(:enter) && (keys.include?(:lmenu) || keys.include?(:rmenu))
       game.fullscreen = !game.fullscreen?
+    elsif keys.include?(:f5)
+      reload
+    elsif keys.include?(:escape)
+      break
     end
     game.screen.render_texture(bg, 0, 0)
     yield game
   end
 end
 
-# int main() { ... } ‚İ‚½‚¢‚É‘‚¯‚é‚æ‚¤‚É‚·‚éƒ_ƒ~[ŠÖ”
+# int main() { ... } ã¿ãŸã„ã«æ›¸ã‘ã‚‹ã‚ˆã†ã«ã™ã‚‹ãƒ€ãƒŸãƒ¼é–¢æ•°
 def int(*)
   warn ":p"
 end
@@ -429,14 +453,29 @@ end
 end # module DotGame
 
 if __FILE__ == $0
-  unless File.exist?('main.txt')
-    open('main.txt', 'w') do |f|
+  script = 'main.txt'
+  
+  if !File.exist?(script)
+    open(script, 'w') do |f|
+      f.puts "# dotgame v#{DotGame::VERSION}"
+      f.puts "# https://gist.github.com/962107"
+      f.puts
       f.puts 'main() {'
       f.puts '  text "HOGE"'
+      f.puts '  dot 5, 10'
+      f.puts '  dot 10, 10, red'
+      f.puts '  dot 15, 10'
       f.puts '}'
     end
   end
-    
-  include DotGame
-  load 'main.txt'
+  
+  system "start #{script}"
+  
+  begin
+    r = catch(:dotgame_reload) do
+      include DotGame
+      load script
+      nil
+    end
+  end while r
 end
