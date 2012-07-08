@@ -484,9 +484,8 @@ if __FILE__ == $0
       f.puts '  dot 15, 10'
       f.puts '}'
     end
+    system "start #{script}"
   end
-  
-  system "start #{script}"
   
   begin
     r = catch(:dotgame_reload) do
