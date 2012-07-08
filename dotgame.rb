@@ -493,5 +493,13 @@ if __FILE__ == $0
       load script
       nil
     end
+  rescue Interrupt
+    r = nil
+  rescue Exception => e
+    puts e.class
+    puts e
+    puts e.backtrace
+    r = e
+    STDIN.gets
   end while r
 end
