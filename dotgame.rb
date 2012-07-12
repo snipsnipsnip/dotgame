@@ -12,33 +12,18 @@ include Math
 
 # 色 #
 
-def white
-  Color(255, 255, 255)
+def self.define_color(name, r, g, b)
+  color = StarRuby::Color.new(r, g, b)
+  define_method(name) { color }
 end
 
-def gray
-  Color(220, 220, 220)
-end
-
-def black
-  Color(0, 0, 0)
-end
-
-def red
-  Color(255, 0, 0)
-end
-
-def green
-  Color(0, 255, 0)
-end
-
-def blue
-  Color(0, 0, 255)
-end
-
-def yellow
-  Color(255, 255, 0)
-end
+define_color :white, 255, 255, 255
+define_color :gray, 220, 220, 220
+define_color :black, 0, 0, 0
+define_color :red, 255, 0, 0
+define_color :green, 0, 255, 0
+define_color :blue, 0, 0, 255
+define_color :yellow, 255, 255, 0
 
 # 描画 #
 
