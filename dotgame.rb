@@ -6,7 +6,7 @@ require 'kconv'
 
 module DotGame
 
-VERSION = "0.0.5"
+VERSION = "0.0.6"
 
 include Math
 
@@ -307,7 +307,7 @@ end
 
 # タイトルバーの文字列を設定
 def title(t)
-  StarRuby::Game.current.title = (t.is_a?(Array) ? t.inspect : t.to_s).toutf8
+  StarRuby::Game.current.title = (t.is_a?(String) ? t : t.inspect).toutf8
 end
 
 # マウス座標をいっぺんに取り出す
@@ -433,7 +433,7 @@ end
 end # module DotGame
 
 if __FILE__ == $0
-  script = 'main.txt'
+  script = ARGV[0] || 'main.txt'
   
   if !File.exist?(script)
     open(script, 'w') do |f|
@@ -459,10 +459,11 @@ if __FILE__ == $0
   rescue Interrupt
     r = nil
   rescue Exception => e
-    puts e.class
-    puts e
-    puts e.backtrace
-    r = e
+    puts "203G\203\211\201[\203\201\203b\203Z\201[\203W:\n  #{e}"
+    puts "\203G\203\211\201[\202\314\216\355\227\336:\n  #{e.class}"
+    puts "\214\304\202\321\217o\202\265\227\232\227\360:", e.backtrace[0..-5].map {|x| "  #{x}" }
+    r = true
+    puts "\203\212\203^\201[\203\223\202\360\211\237\202\267\202\306\215\304\212J\202\265\202\334\202\267"
     STDIN.gets
   end while r
 end
