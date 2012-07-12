@@ -61,7 +61,7 @@ def line(x1, y1, x2, y2, r=0, g=nil, b=nil, a=255, s=StarRuby::Game.current.scre
   s.render_line x1, y1, x2, y2, color
 end
 
-# 線を引く
+# 四角形を書く
 #
 # 書式：
 #   square 左上のX座標, 左上のY座標, 横幅, 縦幅
@@ -86,33 +86,28 @@ end
 #   image "c:/tree.gif", 5, 5
 #   image "c:/face.png", 3, 3, 2
 def image(name, x=0, y=0, scale=nil, s=StarRuby::Game.current.screen)
-  opt = scale.is_a?(Hash) ? scale : { :scale_x => scale, :scale_y => scale } if scale
-  if t = name.is_a?(String) ? DotGame.get_texture(name) : name
+  if t = DotGame.get_texture(name)
+    opt = scale.is_a?(Hash) ? scale : { :scale_x => scale, :scale_y => scale } if scale
     s.render_texture t, x, y, opt
-  else
-    warn "\211\346\221\234 '#{name}' \202\252\223\307\202\335\215\236\202\337\202\334\202\271\202\361\202\305\202\265\202\275"
   end
 end
 
 def imagew(name)
-  if t = name.is_a?(String) ? DotGame.get_texture(name) : name
+  if t = DotGame.get_texture(name)
     t.width
-  else
-    warn "\211\346\221\234 '#{name}' \202\252\223\307\202\335\215\236\202\337\202\334\202\271\202\361\202\305\202\265\202\275"
   end
 end
 
 def imageh(name)
-  if t = name.is_a?(String) ? DotGame.get_texture(name) : name
+  if t = DotGame.get_texture(name)
     t.width
-  else
-    warn "\211\346\221\234 '#{name}' \202\252\223\307\202\335\215\236\202\337\202\334\202\271\202\361\202\305\202\265\202\275"
   end
 end
 
 def self.get_texture(name)
-  @_textures ||= {}
+  return name unless name.is_a?(String)
   @_textures[name] ||= StarRuby::Texture.load(name)
+  warn "\211\346\221\234 '#{name}' \202\252\223\307\202\335\215\236\202\337\202\334\202\271\202\361\202\305\202\265\202\275"
 end
 
 # 英数字を書く
