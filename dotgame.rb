@@ -272,48 +272,17 @@ end
 
 # 入力とか #
 
-# スペースキー
-def space?
-  key?(:space)
-end
-
 # アルファベット各種
-('a'..'z').each do |c|
+[:space, :left, :right, :up, :down, *'a'..'z'].each do |c|
   s = c.to_sym
-  define_method("#{c}key?") { key? s }
+  define_method("#{c}?") { key? s }
+  define_method("#{c}release?") { release? s }
 end
 
-# 矢印
-def left?
-  key?(:left)
-end
-
-def right?
-  key?(:right)
-end
-
-def up?
-  key?(:up)
-end
-
-def down?
-  key?(:down)
-end
-
-def leftmouse?
-  key?(:left, :mouse)
-end
-
-def rightmouse?
-  key?(:left, :mouse)
-end
-
-def leftclick?
-  click?(:left, :mouse)
-end
-
-def rightclick?
-  click?(:left, :mouse)
+# マウス
+[:left, :right, :middle].each do |c|
+  define_method("#{c}mouse?") { key?(c, :mouse) }
+  define_method("#{c}click?") { release?(c, :mouse) }
 end
 
 def mousex
@@ -364,19 +333,19 @@ end
 
 # キーが放された瞬間ならtrue、でなければfalse
 # 例:
-#   if click?(:left, :mouse)
+#   if release?(:z, :mouse)
 #     # Zボタンが離された瞬間だけの処理
 #   end
-def click?(key, device=:keyboard)
+def release?(key, device=:keyboard)
   new = key?(key, device)
-  old = DotGame._click_state([key, device], new)
+  old = DotGame._click_state(device, key, new)
   old && !new
 end
 
-def self._click_state(key, new)
-  @_click_state ||= {}
-  old = @_click_state[key]
-  @_click_state[key] = new
+def self._click_state(device, key, new)
+  a = @_click_state[device]
+  old = a[key]
+  a[key] = new
   old
 end
 
@@ -411,8 +380,23 @@ def screenh
   screen.height
 end
 
+def window_scale
+  StarRuby::Game.current.window_scale
+end
+
+def window_scale=(s)
+  StarRuby::Game.current.window_scale = s
+end
+
+def self.init
+  @_textures = {}
+  @_click_state = Hash.new {|s,k| s[k] = {} }
+end
+
 # 本体 #
 def main(w=20, h=20, fps=30, title=nil)
+  DotGame.init
+  
   if title
     title = title.to_s.toutf8
   else
@@ -425,16 +409,15 @@ def main(w=20, h=20, fps=30, title=nil)
     bg[x, y] = gray if (x + y).odd?
   end
   StarRuby::Game.run(w, h, { :title => title, :window_scale => [600.0 / [w, h].max, 1].max, :cursor => true, :fps => fps }) do |game|
-    keys = StarRuby::Input.keys(:keyboard)
-    if keys.include?(:plus)
+    if release?(:add)
       game.window_scale += 1
-    elsif keys.include?(:minus)
+    elsif release?(:subtract)
       game.window_scale -= 1
-    elsif keys.include?(:f11) || keys.include?(:enter) && (keys.include?(:lmenu) || keys.include?(:rmenu))
+    elsif release?(:f11) || release?(:enter) && (key?(:lmenu) || key?(:rmenu))
       game.fullscreen = !game.fullscreen?
-    elsif keys.include?(:f5)
+    elsif release?(:f5)
       reload
-    elsif keys.include?(:escape)
+    elsif release?(:escape)
       break
     end
     game.screen.render_texture(bg, 0, 0)
