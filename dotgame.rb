@@ -435,9 +435,10 @@ end
 end # module DotGame
 
 if __FILE__ == $0
-  script = ARGV[0] || 'main.txt'
+  script = (ARGV + %w[main.rb main.txt]).find {|x| x && File.exist?(x) }
   
-  if !File.exist?(script)
+  unless script
+    script = 'main.txt'
     open(script, 'w') do |f|
       f.puts "# dotgame v#{DotGame::VERSION}"
       f.puts "# https://gist.github.com/962107"
@@ -461,7 +462,7 @@ if __FILE__ == $0
   rescue Interrupt
     r = nil
   rescue Exception => e
-    puts "203G\203\211\201[\203\201\203b\203Z\201[\203W:\n  #{e}"
+    puts "\203G\203\211\201[\203\201\203b\203Z\201[\203W:\n  #{e}"
     puts "\203G\203\211\201[\202\314\216\355\227\336:\n  #{e.class}"
     puts "\214\304\202\321\217o\202\265\227\232\227\360:", e.backtrace[0..-5].map {|x| "  #{x}" }
     r = true
