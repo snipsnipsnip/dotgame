@@ -107,7 +107,9 @@ end
 def self.get_texture(name)
   return name unless name.is_a?(String)
   @_textures[name] ||= StarRuby::Texture.load(name)
+rescue
   warn "\211\346\221\234 '#{name}' \202\252\223\307\202\335\215\236\202\337\202\334\202\271\202\361\202\305\202\265\202\275"
+  nil
 end
 
 # 英数字を書く
