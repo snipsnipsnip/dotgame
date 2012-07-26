@@ -395,8 +395,17 @@ def self.init
   @_click_state = Hash.new {|s,k| s[k] = {} }
 end
 
+def self._make_checkerboard(w, h)
+  bg = StarRuby::Texture.new(w, h)
+  bg.fill(white)
+  raster(bg) do |x,y|
+    bg[x, y] = gray if (x + y).odd?
+  end
+  bg
+end
+
 # 本体 #
-def main(w=20, h=20, fps=30, title=nil)
+def main(w=20, h=20, fps=30, title=nil, bg=DotGame._make_checkerboard(w, h))
   DotGame.init
   
   if title
@@ -405,12 +414,14 @@ def main(w=20, h=20, fps=30, title=nil)
     title = "F5キーでリロード - dotgame v#{DotGame::VERSION}"
   end
   
-  bg = StarRuby::Texture.new(w, h)
-  bg.fill(white)
-  raster(bg) do |x,y|
-    bg[x, y] = gray if (x + y).odd?
-  end
-  StarRuby::Game.run(w, h, { :title => title, :window_scale => [600.0 / [w, h].max, 1].max, :cursor => true, :fps => fps }) do |game|
+  opts = {
+    :title => title,
+    :window_scale => [600.0 / [w, h].max, 1].max,
+    :cursor => true,
+    :fps => fps
+  }
+  
+  StarRuby::Game.run(w, h, opts) do |game|
     if release?(:add)
       game.window_scale += 1
     elsif release?(:subtract)
@@ -422,7 +433,7 @@ def main(w=20, h=20, fps=30, title=nil)
     elsif release?(:escape)
       break
     end
-    game.screen.render_texture(bg, 0, 0)
+    game.screen.render_texture(bg, 0, 0) if bg
     yield game
   end
 end
