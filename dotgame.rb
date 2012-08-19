@@ -101,7 +101,8 @@ end
 #   image "ファイル名"
 #   image "ファイル名", 左上のX座標, 左上のY座標
 #   image "ファイル名", 左上のX座標, 左上のY座標, 倍率
-#
+#   image "ファイル名", 左上のX座標, 左上のY座標, {オプション}
+#   
 # 例：
 #   image "neko.bmp"
 #   image "c:/tree.gif", 5, 5
@@ -272,8 +273,8 @@ def imageh(name)
 end
 
 def self.get_texture(name)
-  return name unless name.is_a?(String)
-  @_textures[name] ||= StarRuby::Texture.load(name)
+  return name if name.is_a?(StarRuby::Texture)
+  @_textures[name] ||= StarRuby::Texture.load(name.to_s)
 rescue
   warn "\211\346\221\234 '#{name}' \202\252\223\307\202\335\215\236\202\337\202\334\202\271\202\361\202\305\202\265\202\275"
   nil
