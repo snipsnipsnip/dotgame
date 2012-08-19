@@ -12,8 +12,8 @@ include Math
 
 # 色 #
 
-def self.define_color(name, r, g, b)
-  color = StarRuby::Color.new(r, g, b)
+def self.define_color(name, r, g=nil, b=nil, a=255)
+  color = r.is_a?(StarRuby::Color) ? r : StarRuby::Color.new(r, g || r, b || r, a)
   define_method(name) { color }
 end
 
@@ -24,8 +24,15 @@ define_color :red, 255, 0, 0
 define_color :green, 0, 255, 0
 define_color :blue, 0, 0, 255
 define_color :yellow, 255, 255, 0
+define_color :cyan, 0, 255, 255
+define_color :magenta, 255, 0, 255
+define_color :purple, 128, 0, 128
+define_color :yellow, 255, 255, 0
+define_color :transparent, 255, 255, 255, 0
 
 # 描画 #
+
+module DrawingAliases
 
 # 点を打つ
 #
@@ -40,9 +47,9 @@ define_color :yellow, 255, 255, 0
 #   dot 3, 3
 #   dot 10, 10, 50
 #   dot 10, 10, 50, 200, 50
-def dot(x, y, r=0, g=nil, b=nil, a=255, s=StarRuby::Game.current.screen)
+def dot(x, y, r=0, g=nil, b=nil, a=255)
   color = r.is_a?(StarRuby::Color) ? r : Color(r, g || r, b || r, a)
-  s.render_pixel x, y, color
+  render_pixel x, y, color
 end
 
 # 線を引く
@@ -56,9 +63,9 @@ end
 #
 # 例：
 #   line 10, 10, 50, 200, red
-def line(x1, y1, x2, y2, r=0, g=nil, b=nil, a=255, s=StarRuby::Game.current.screen)
+def line(x1, y1, x2, y2, r=0, g=nil, b=nil, a=255)
   color = r.is_a?(StarRuby::Color) ? r : Color(r, g || r, b || r, a)
-  s.render_line x1, y1, x2, y2, color
+  render_line x1, y1, x2, y2, color
 end
 
 # 四角形を書く
@@ -68,9 +75,23 @@ end
 #
 # 例：
 #   square 10, 10, 5, 5, blue
-def square(x, y, w, h, r=0, g=nil, b=nil, a=255, s=StarRuby::Game.current.screen)
+def square(x, y, w, h, r=0, g=nil, b=nil, a=255)
   color = r.is_a?(StarRuby::Color) ? r : Color(r, g || r, b || r, a)
-  s.render_rect x, y, w, h, color
+  render_rect x, y, w, h, color
+end
+
+# ぬりつぶし
+#
+# 書式：
+#   bucket 色の名前 (red, blue, green..)
+#   bucket 色の濃さ (0～255)
+#   bucket R, G, B
+#
+# 例：
+#   bucket white
+def bucket(r=0, g=nil, b=nil, a=255)
+  color = r.is_a?(StarRuby::Color) ? r : Color(r, g || r, b || r, a)
+  fill(color)
 end
 
 # 画像を張り付ける
@@ -85,31 +106,11 @@ end
 #   image "neko.bmp"
 #   image "c:/tree.gif", 5, 5
 #   image "c:/face.png", 3, 3, 2
-def image(name, x=0, y=0, scale=nil, s=StarRuby::Game.current.screen)
+def image(name, x=0, y=0, scale=nil)
   if t = DotGame.get_texture(name)
     opt = scale.is_a?(Hash) ? scale : { :scale_x => scale, :scale_y => scale } if scale
-    s.render_texture t, x, y, opt
+    render_texture t, x, y, opt
   end
-end
-
-def imagew(name)
-  if t = DotGame.get_texture(name)
-    t.width
-  end
-end
-
-def imageh(name)
-  if t = DotGame.get_texture(name)
-    t.width
-  end
-end
-
-def self.get_texture(name)
-  return name unless name.is_a?(String)
-  @_textures[name] ||= StarRuby::Texture.load(name)
-rescue
-  warn "\211\346\221\234 '#{name}' \202\252\223\307\202\335\215\236\202\337\202\334\202\271\202\361\202\305\202\265\202\275"
-  nil
 end
 
 # 英数字を書く
@@ -127,7 +128,7 @@ end
 #   text 100
 #   text "hoge"
 #   text "hoge", 5, 5
-def text(msg, x=0, y=0, r=0, g=nil, b=nil, a=255, s=StarRuby::Game.current.screen)
+def text(msg, x=0, y=0, r=0, g=nil, b=nil, a=255)
   color = r.is_a?(StarRuby::Color) ? r : Color(r, g || r, b || r, a)
   ix = x
   msg.to_s.each_byte do |c|
@@ -135,14 +136,14 @@ def text(msg, x=0, y=0, r=0, g=nil, b=nil, a=255, s=StarRuby::Game.current.scree
       x = ix
       y += 6
     else
-      DotGame.draw_letter(s, x, y, c, color)
+      _draw_letter(self, x, y, c, color)
       x += 6
     end
   end
 end
 
 # フチつきtext
-def textbold(msg, x=0, y=0, inner=white, outer=black, s=StarRuby::Game.current.screen)
+def textbold(msg, x=0, y=0, inner=white, outer=black)
   x += 1
   y += 1
   ix = x
@@ -151,7 +152,7 @@ def textbold(msg, x=0, y=0, inner=white, outer=black, s=StarRuby::Game.current.s
       x = ix
       y += 7
     else
-      DotGame.draw_letter_bold(s, x, y, c, inner, outer)
+      _draw_letter_bold(self, x, y, c, inner, outer)
       x += 8
     end
   end
@@ -178,7 +179,7 @@ ShinhFont = [
     0x00e221c0, 0x00c2088c, 0x00421084, 0x00622086, 0x000022a2, 
 ]
 
-def self.draw_letter(screen, x, y, c, color)
+def _draw_letter(screen, x, y, c, color)
   i = c - 32
   return if i < 0 || i >= ShinhFont.size
   d = ShinhFont[i]
@@ -192,7 +193,7 @@ def self.draw_letter(screen, x, y, c, color)
   end
 end
 
-def self.draw_letter_bold(screen, x, y, c, inner, outer)
+def _draw_letter_bold(screen, x, y, c, inner, outer)
   i = c - 32
   return if i < 0 || i >= ShinhFont.size
   d = ShinhFont[i]
@@ -224,6 +225,58 @@ def self.draw_letter_bold(screen, x, y, c, inner, outer)
       end
     end
   end
+end
+
+# 全画面一気に描画する
+# 例:
+#   raster do |x, y|
+#     if x + y % 2 == 0
+#       gray
+#     else
+#       white
+#     end
+#   end
+def raster
+  height.times do |y|
+    width.times do |x|
+      if color = yield(x, y)
+        self[x, y] = color
+      end
+    end
+  end
+end
+
+end # module DrawingAliases
+
+StarRuby::Texture.module_eval do
+  include DrawingAliases
+end
+
+DrawingAliases.instance_methods.each do |name|
+  game = StarRuby::Game
+  define_method(name) do |*args|
+    game.current.screen.__send__(name, *args)
+  end
+end
+
+def imagew(name)
+  if t = DotGame.get_texture(name)
+    t.width
+  end
+end
+
+def imageh(name)
+  if t = DotGame.get_texture(name)
+    t.width
+  end
+end
+
+def self.get_texture(name)
+  return name unless name.is_a?(String)
+  @_textures[name] ||= StarRuby::Texture.load(name)
+rescue
+  warn "\211\346\221\234 '#{name}' \202\252\223\307\202\335\215\236\202\337\202\334\202\271\202\361\202\305\202\265\202\275"
+  nil
 end
 
 # 音 #
@@ -351,29 +404,6 @@ def self._click_state(device, key, new)
   old
 end
 
-# 全画面一気に描画する
-# 例:
-#   raster do |x, y|
-#     if x + y % 2 == 0
-#       gray
-#     else
-#       white
-#     end
-#   end
-def raster(s=StarRuby::Game.current.screen)
-  s.height.times do |y|
-    s.width.times do |x|
-      if color = yield(x, y)
-        s[x, y] = color
-      end
-    end
-  end
-end
-
-def screen
-  StarRuby::Game.current.screen
-end
-
 def screenw
   screen.width
 end
@@ -390,15 +420,19 @@ def window_scale=(s)
   StarRuby::Game.current.window_scale = s
 end
 
+def make_texture(*args)
+  StarRuby::Texture.new(*args)
+end
+
 def self.init
   @_textures = {}
   @_click_state = Hash.new {|s,k| s[k] = {} }
 end
 
 def self._make_checkerboard(w, h)
-  bg = StarRuby::Texture.new(w, h)
+  bg = make_texture(w, h)
   bg.fill(white)
-  raster(bg) do |x,y|
+  bg.raster do |x,y|
     bg[x, y] = gray if (x + y).odd?
   end
   bg
@@ -467,7 +501,7 @@ if __FILE__ == $0
   begin
     r = catch(:dotgame_reload) do
       include DotGame
-      load script
+      Object.new.instance_eval { load script }
       nil
     end
   rescue Interrupt
