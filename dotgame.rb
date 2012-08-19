@@ -6,7 +6,7 @@ require 'kconv'
 
 module DotGame
 
-VERSION = "0.0.6"
+VERSION = "0.0.7"
 
 include Math
 
@@ -383,7 +383,7 @@ end
 #     # Zボタン押してる時の処理
 #   end
 def key?(key, device=:keyboard)
-  StarRuby::Input.keys(device).include?(key)
+  DotGame._pressed?(key, device)
 end
 
 # キーが放された瞬間ならtrue、でなければfalse
@@ -392,16 +392,27 @@ end
 #     # Zボタンが離された瞬間だけの処理
 #   end
 def release?(key, device=:keyboard)
-  new = key?(key, device)
-  old = DotGame._click_state(device, key, new)
-  old && !new
+  DotGame._click_state(key, device)
 end
 
-def self._click_state(device, key, new)
+def self._swap_click_state
+  @_click_state, @_click_state_prev = @_click_state_prev, @_click_state
+  @_click_state.each_value {|h| h.clear }
+end
+
+def self._pressed?(key, device)
   a = @_click_state[device]
-  old = a[key]
-  a[key] = new
-  old
+  curr = a[key]
+  
+  if curr.nil?
+    a[key] = StarRuby::Input.keys(device).include?(key)
+  else
+    curr
+  end
+end
+
+def self._click_state(key, device)
+  @_click_state_prev[device][key] && _pressed?(key, device)
 end
 
 def screenw
@@ -427,6 +438,7 @@ end
 def self.init
   @_textures = {}
   @_click_state = Hash.new {|s,k| s[k] = {} }
+  @_click_state_prev = Hash.new {|s,k| s[k] = {} }
 end
 
 def self._make_checkerboard(w, h)
@@ -456,6 +468,7 @@ def main(w=20, h=20, fps=30, title=nil, bg=DotGame._make_checkerboard(w, h))
   }
   
   StarRuby::Game.run(w, h, opts) do |game|
+    DotGame._swap_click_state
     if release?(:add)
       game.window_scale += 1
     elsif release?(:subtract)
