@@ -351,8 +351,8 @@ end
 # 慣れてきたら使う用 #
 
 # 再起動
-def reload
-  throw :dotgame_reload, true
+def self.reload
+  throw :dotgame_reload, :dotgame_reload
 end
 
 # 起動からのミリ秒
@@ -476,7 +476,7 @@ def main(w=20, h=20, fps=30, title=nil, bg=DotGame._make_checkerboard(w, h))
     elsif release?(:f11) || release?(:enter) && (key?(:lmenu) || key?(:rmenu))
       game.fullscreen = !game.fullscreen?
     elsif release?(:f5)
-      reload
+      DotGame.reload
     elsif release?(:escape)
       break
     end
