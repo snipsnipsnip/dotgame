@@ -392,7 +392,7 @@ end
 #     # Zボタンが離された瞬間だけの処理
 #   end
 def release?(key, device=:keyboard)
-  DotGame._click_state(key, device)
+  DotGame._released?(key, device)
 end
 
 def self._swap_click_state
@@ -411,8 +411,8 @@ def self._pressed?(key, device)
   end
 end
 
-def self._click_state(key, device)
-  @_click_state_prev[device][key] && _pressed?(key, device)
+def self._released?(key, device)
+  !_pressed?(key, device) && @_click_state_prev[device][key]
 end
 
 def screenw
