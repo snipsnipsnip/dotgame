@@ -445,9 +445,7 @@ end
 def self._make_checkerboard(w, h)
   bg = make_texture(w, h)
   bg.fill(white)
-  bg.raster do |x,y|
-    bg[x, y] = gray if (x + y).odd?
-  end
+  bg.raster {|x,y| (x + y).odd? ? gray : white }
   bg
 end
 
