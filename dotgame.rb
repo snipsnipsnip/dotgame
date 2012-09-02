@@ -384,7 +384,7 @@ end
 #     # Zボタン押してる時の処理
 #   end
 def key?(key, device=:keyboard)
-  DotGame._pressed?(key, device)
+  DotGame.pressed?(key, device)
 end
 
 # キーが放された瞬間ならtrue、でなければfalse
@@ -393,28 +393,22 @@ end
 #     # Zボタンが離された瞬間だけの処理
 #   end
 def release?(key, device=:keyboard)
-  DotGame._released?(key, device)
+  DotGame.released?(key, device)
 end
 
-def self._swap_click_state
-  @_click_state, @_click_state_prev = @_click_state_prev, @_click_state
-  @_click_state.each_value {|h| h.clear }
+def self.swap_keys
+  @keys, @keys_prev = @keys_prev, @keys
+  @keys.each_key {|k| @keys[k] = StarRuby::Input.keys(*k) }
 end
 
-def self._pressed?(key, device)
-  a = @_click_state[device]
-  curr = a[key]
-  
-  if curr.nil?
-    a[key] = StarRuby::Input.keys(device).include?(key)
-  else
-    curr
-  end
+def self.pressed?(key, device)
+  @keys[device].include?(key)
 end
 
-def self._released?(key, device)
-  !_pressed?(key, device) && @_click_state_prev[device][key]
+def self.released?(key, device)
+  @keys_prev[device].include?(key) && !@keys[device].include?(key)
 end
+
 
 def screenw
   screen.width
@@ -438,9 +432,11 @@ end
 
 def self.init
   @_textures = {}
-  @_click_state = Hash.new {|s,k| s[k] = {} }
-  @_click_state_prev = Hash.new {|s,k| s[k] = {} }
+  @keys = {:keyboard => [], :mouse => []}
+  StarRuby::Input.gamepad_count.times {|i| @keys[[:gamepad, {:device_number => i}]] = [] }
+  @keys_prev = @keys.dup
 end
+
 
 def self._make_checkerboard(w, h)
   bg = make_texture(w, h)
@@ -467,7 +463,7 @@ def main(w=20, h=20, fps=30, title=nil, bg=DotGame._make_checkerboard(w, h))
   }
   
   StarRuby::Game.run(w, h, opts) do |game|
-    DotGame._swap_click_state
+    DotGame.swap_keys
     if release?(:add)
       game.window_scale += 1
     elsif release?(:subtract)
