@@ -187,7 +187,7 @@ def ShinhFont.draw_letter(screen, x, y, c, color)
   
   5.times do |i|
     5.times do |j|
-      next if ((d >> (i * 5 + j)) & 1) == 0
+      next if d[i * 5 + j].zero?
       
       screen[x + j, y + i] = color
     end
@@ -201,27 +201,27 @@ def ShinhFont.draw_letter_bold(screen, x, y, c, inner, outer)
   
   5.times do |i|
     5.times do |j|
-      next if ((d >> (i * 5 + j)) & 1) == 0
+      next if d[i * 5 + j].zero?
       
       screen[x + j, y + i] = inner
       
       # top
-      if i == 0 || ((d >> ((i - 1) * 5 + j)) & 1) == 0
+      if i == 0 || d[(i - 1) * 5 + j].zero?
         screen[x + j, y + i - 1] = outer
       end
 
       # bottom
-      if i == 4 || ((d >> ((i + 1) * 5 + j)) & 1) == 0
+      if i == 4 || d[(i + 1) * 5 + j].zero?
         screen[x + j, y + i + 1] = outer
       end
       
       # left
-      if j == 0 || ((d >> (i * 5 + j - 1)) & 1) == 0
+      if i == 0 || d[i * 5 + j - 1].zero?
         screen[x + j - 1, y + i] = outer
       end
       
       # right
-      if j == 4 || ((d >> (i * 5 + j + 1)) & 1) == 0
+      if i == 4 || d[i * 5 + j + 1].zero?
         screen[x + j + 1, y + i] = outer
       end
     end
