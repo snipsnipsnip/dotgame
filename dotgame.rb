@@ -268,7 +268,7 @@ end
 
 def imageh(name)
   if t = DotGame.get_texture(name)
-    t.width
+    t.height
   end
 end
 
@@ -526,7 +526,7 @@ if __FILE__ == $0
   begin
     r = catch(:dotgame_reload) do
       include DotGame
-      Object.new.instance_eval { load script }
+      Module.new.instance_eval { load script }
       nil
     end
   rescue Interrupt
