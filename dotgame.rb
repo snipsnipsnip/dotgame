@@ -153,7 +153,7 @@ def textbold(msg, x=0, y=0, inner=white, outer=black)
       x = ix
       y += 7
     else
-      ShinhFont.draw_letter_bold(self, x, y, c, inner, outer)
+      ShinhFont.draw_letter(self, x, y, c, inner, outer)
       x += 8
     end
   end
@@ -180,21 +180,7 @@ ShinhFont = [
     0x00e221c0, 0x00c2088c, 0x00421084, 0x00622086, 0x000022a2, 
 ]
 
-def ShinhFont.draw_letter(screen, x, y, c, color)
-  i = c - 32
-  return if i < 0 || i >= ShinhFont.size
-  d = ShinhFont[i]
-  
-  5.times do |i|
-    5.times do |j|
-      next if d[i * 5 + j].zero?
-      
-      screen[x + j, y + i] = color
-    end
-  end
-end
-
-def ShinhFont.draw_letter_bold(screen, x, y, c, inner, outer)
+def ShinhFont.draw_letter(screen, x, y, c, inner, outer=nil)
   i = c - 32
   return if i < 0 || i >= ShinhFont.size
   d = ShinhFont[i]
@@ -204,6 +190,8 @@ def ShinhFont.draw_letter_bold(screen, x, y, c, inner, outer)
       next if d[i * 5 + j].zero?
       
       screen[x + j, y + i] = inner
+      
+      next unless outer
       
       # top
       if i == 0 || d[(i - 1) * 5 + j].zero?
