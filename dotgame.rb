@@ -341,6 +341,23 @@ end
   define_method("#{c}click?") { release?(c, :mouse) }
 end
 
+# ゲームパッド
+(0..5).each do |n|
+  device = [:gamepad, {:device_number => [0, n - 1].max}]
+  name = n == 0 ? '' : n.to_s
+  
+  [:left, :right, :up, :down].each do |c|
+    define_method("pad#{name}#{c}?") { key?(c, device) }
+    define_method("pad#{name}#{c}release?") { release?(c, device) }
+  end
+  
+  ("a".."z").each_with_index do |c, i|
+    button = i + 1
+    define_method("pad#{name}#{c}?") { key?(button, device) }
+    define_method("pad#{name}#{c}release?") { release?(button, device) }
+  end
+end
+
 def mousex
   mouse[0]
 end
