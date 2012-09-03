@@ -26,14 +26,14 @@ class DotFontTest < Test::Unit::TestCase
       end
       
       should "work on index 0" do
-        screen = mock(:screen)
-        x = stub(:x)
-        y = stub(:y)
-        scale = stub(:scale)
-        color = stub(:color, :red => stub, :blue => stub, :green => stub)
-        transparent = mock(:transparent)
-        tex = mock(:cache_texture)
-        black = mock(:black)
+        screen = mock("screen")
+        x = stub("x")
+        y = stub("y")
+        scale = stub("scale")
+        color = stub("color", {:red => stub, :blue => stub, :green => stub})
+        transparent = mock("transparent")
+        tex = mock("cache_texture")
+        black = mock("black")
         
         tex.expects(:fill).with(transparent)
         subject.expects(:make_texture).with(5, 5).returns(tex)
