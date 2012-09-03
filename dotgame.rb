@@ -137,6 +137,7 @@ def text(msg, x=0, y=0, r=0, g=nil, b=nil, a=255)
       x = ix
       y += 6
     else
+      c -= 32
       ShinhFont.draw_letter(self, x, y, c, color)
       x += 6
     end
@@ -153,7 +154,12 @@ def textbold(msg, x=0, y=0, inner=white, outer=black)
       x = ix
       y += 7
     else
-      ShinhFont.draw_letter(self, x, y, c, inner, outer)
+      c -= 32
+      ShinhFont.draw_letter(self, x + 1, y, c, outer)
+      ShinhFont.draw_letter(self, x - 1, y, c, outer)
+      ShinhFont.draw_letter(self, x, y + 1, c, outer)
+      ShinhFont.draw_letter(self, x, y - 1, c, outer)
+      ShinhFont.draw_letter(self, x, y, c, inner)
       x += 8
     end
   end
@@ -180,38 +186,12 @@ ShinhFont = [
     0x00e221c0, 0x00c2088c, 0x00421084, 0x00622086, 0x000022a2, 
 ]
 
-def ShinhFont.draw_letter(screen, x, y, c, inner, outer=nil)
-  i = c - 32
-  return if i < 0 || i >= ShinhFont.size
+def ShinhFont.draw_letter(screen, x, y, i, color)
   d = ShinhFont[i]
-  
-  5.times do |i|
-    5.times do |j|
-      next if d[i * 5 + j].zero?
-      
-      screen[x + j, y + i] = inner
-      
-      next unless outer
-      
-      # top
-      if i == 0 || d[(i - 1) * 5 + j].zero?
-        screen[x + j, y + i - 1] = outer
-      end
-
-      # bottom
-      if i == 4 || d[(i + 1) * 5 + j].zero?
-        screen[x + j, y + i + 1] = outer
-      end
-      
-      # left
-      if i == 0 || d[i * 5 + j - 1].zero?
-        screen[x + j - 1, y + i] = outer
-      end
-      
-      # right
-      if i == 4 || d[i * 5 + j + 1].zero?
-        screen[x + j + 1, y + i] = outer
-      end
+  5.times do |j|
+    5.times do |i|
+      screen[x + i, y + j] = color unless d[0].zero?
+      d >>= 1
     end
   end
 end
