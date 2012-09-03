@@ -24,6 +24,12 @@ Draw.instance_methods.each do |name|
   end
 end
 
+# 色を作る
+# 例: yellow = Color(255, 255, 0)
+def Color(r, g, b, a=255)
+  r.is_a?(StarRuby::Color) ? r : StarRuby::Color.new(r, g, b, a)
+end
+
 # 画像の横幅を調べる。
 def imagew(name)
   t = DotGame.get_texture(name) and t.width
