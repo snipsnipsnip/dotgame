@@ -13,8 +13,8 @@ include Math
 
 # 色 #
 
-def self.define_color(name, r, g=nil, b=nil, a=255)
-  color = r.is_a?(StarRuby::Color) ? r : StarRuby::Color.new(r, g || r, b || r, a)
+def self.define_color(name, r, g=r, b=r, a=255)
+  color = r.is_a?(StarRuby::Color) ? r : StarRuby::Color.new(r, g, b, a)
   define_method(name) { color }
 end
 
@@ -48,8 +48,8 @@ module DrawingAliases
 #   dot 3, 3
 #   dot 10, 10, 50
 #   dot 10, 10, 50, 200, 50
-def dot(x, y, r=0, g=nil, b=nil, a=255)
-  color = r.is_a?(StarRuby::Color) ? r : Color(r, g || r, b || r, a)
+def dot(x, y, r=0, g=r, b=r, a=255)
+  color = r.is_a?(StarRuby::Color) ? r : StarRuby::Color.new(r, g, b, a)
   render_pixel x, y, color
 end
 
@@ -64,8 +64,8 @@ end
 #
 # 例：
 #   line 10, 10, 50, 200, red
-def line(x1, y1, x2, y2, r=0, g=nil, b=nil, a=255)
-  color = r.is_a?(StarRuby::Color) ? r : Color(r, g || r, b || r, a)
+def line(x1, y1, x2, y2, r=0, g=r, b=r, a=255)
+  color = r.is_a?(StarRuby::Color) ? r : StarRuby::Color.new(r, g, b, a)
   render_line x1, y1, x2, y2, color
 end
 
@@ -76,8 +76,8 @@ end
 #
 # 例：
 #   square 10, 10, 5, 5, blue
-def square(x, y, w, h, r=0, g=nil, b=nil, a=255)
-  color = r.is_a?(StarRuby::Color) ? r : Color(r, g || r, b || r, a)
+def square(x, y, w, h, r=0, g=r, b=r, a=255)
+  color = r.is_a?(StarRuby::Color) ? r : StarRuby::Color.new(r, g, b, a)
   render_rect x, y, w, h, color
 end
 
@@ -90,8 +90,8 @@ end
 #
 # 例：
 #   bucket white
-def bucket(r=0, g=nil, b=nil, a=255)
-  color = r.is_a?(StarRuby::Color) ? r : Color(r, g || r, b || r, a)
+def bucket(r=0, g=r, b=r, a=255)
+  color = r.is_a?(StarRuby::Color) ? r : StarRuby::Color.new(r, g, b, a)
   fill(color)
 end
 
@@ -133,8 +133,8 @@ end
 #   text 100
 #   text "hoge"
 #   text "hoge", 5, 5
-def text(msg, x=0, y=0, scale=1, r=0, g=nil, b=nil, a=255)
-  color = r.is_a?(StarRuby::Color) ? r : Color(r, g || r, b || r, a)
+def text(msg, x=0, y=0, r=0, g=r, b=r, a=255)
+  color = r.is_a?(StarRuby::Color) ? r : StarRuby::Color.new(r, g, b, a)
   ix = x
   msg.to_s.each_byte do |c|
     if c == 10
@@ -222,16 +222,14 @@ DrawingAliases.instance_methods.each do |name|
   end
 end
 
+# 画像の横幅を調べる。
 def imagew(name)
-  if t = DotGame.get_texture(name)
-    t.width
-  end
+  t = DotGame.get_texture(name) and t.width
 end
 
+# 画像の縦幅を調べる。
 def imageh(name)
-  if t = DotGame.get_texture(name)
-    t.height
-  end
+  t = DotGame.get_texture(name) and t.height
 end
 
 def self.get_texture(name)
