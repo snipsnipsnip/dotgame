@@ -121,46 +121,47 @@ end
 #   text 数値
 #   text "メッセージ"
 #   text "メッセージ", 左上のX座標, 左上のY座標
-#   text "メッセージ", 左上のX座標, 左上のY座標, 色の名前 (red, blue, green..)
-#   text "メッセージ", 左上のX座標, 左上のY座標, 色の濃さ (0～255)
-#   text "メッセージ", 左上のX座標, 左上のY座標, R, G, B
+#   text "メッセージ", 左上のX座標, 左上のY座標, 倍率
+#   text "メッセージ", 左上のX座標, 左上のY座標, 倍率, 色の名前 (red, blue, green..)
+#   text "メッセージ", 左上のX座標, 左上のY座標, 倍率, 色の濃さ (0～255)
+#   text "メッセージ", 左上のX座標, 左上のY座標, 倍率, R, G, B
 #
 # 例：
 #   text 100
 #   text "hoge"
 #   text "hoge", 5, 5
-def text(msg, x=0, y=0, r=0, g=nil, b=nil, a=255)
+def text(msg, x=0, y=0, scale=1, r=0, g=nil, b=nil, a=255)
   color = r.is_a?(StarRuby::Color) ? r : Color(r, g || r, b || r, a)
   ix = x
   msg.to_s.each_byte do |c|
     if c == 10
       x = ix
-      y += 6
+      y += 5 * scale + 1
     else
       c -= 32
-      ShinhFont.draw_letter(self, x, y, c, color)
-      x += 6
+      ShinhFont.draw_letter(self, x, y, c, scale, color)
+      x += 5 * scale + 1
     end
   end
 end
 
 # フチつきtext
-def textbold(msg, x=0, y=0, inner=white, outer=black)
+def textbold(msg, x=0, y=0, scale=1, inner=white, outer=black)
   x += 1
   y += 1
   ix = x
   msg.to_s.each_byte do |c|
     if c == 10
       x = ix
-      y += 7
+      y += 6 * scale + 1
     else
       c -= 32
-      ShinhFont.draw_letter(self, x + 1, y, c, outer)
-      ShinhFont.draw_letter(self, x - 1, y, c, outer)
-      ShinhFont.draw_letter(self, x, y + 1, c, outer)
-      ShinhFont.draw_letter(self, x, y - 1, c, outer)
-      ShinhFont.draw_letter(self, x, y, c, inner)
-      x += 8
+      ShinhFont.draw_letter(self, x + 1, y, c, scale, outer)
+      ShinhFont.draw_letter(self, x - 1, y, c, scale, outer)
+      ShinhFont.draw_letter(self, x, y + 1, c, scale, outer)
+      ShinhFont.draw_letter(self, x, y - 1, c, scale, outer)
+      ShinhFont.draw_letter(self, x, y, c, scale, inner)
+      x += 7 * scale + 1
     end
   end
 end
@@ -186,12 +187,43 @@ ShinhFont = [
     0x00e221c0, 0x00c2088c, 0x00421084, 0x00622086, 0x000022a2, 
 ]
 
-def ShinhFont.draw_letter(screen, x, y, i, color)
-  d = ShinhFont[i]
-  5.times do |j|
-    5.times do |i|
-      screen[x + i, y + j] = color unless d[0].zero?
-      d >>= 1
+class << ShinhFont
+  def draw_letter(screen, x, y, i, scale, color)
+    unless 0 <= i && i < size
+      raise IndexError, "index #{i} out of font array"
+    end
+    
+    screen.render_texture font_cache, x, y, {
+      :src_width => 5,
+      :src_height => 5,
+      :src_x => i * 5,
+      :tone_red => color.red,
+      :tone_green => color.green,
+      :tone_blue => color.blue,
+      :scale_x => scale,
+      :scale_y => scale,
+    }
+  end
+  
+  def font_cache
+    @cache ||= make_cache
+  end
+  
+  def make_cache
+    tex = StarRuby::Texture.new(size * 5, 5)
+    tex.fill transparent
+    each_with_index do |chara, i|
+      plot_letter(tex, i * 5, 0, chara, black)
+    end
+    tex
+  end
+
+  def plot_letter(screen, x, y, letter, color)
+    5.times do |j|
+      5.times do |i|
+        screen[x + i, y + j] = color unless letter[0].zero?
+        letter >>= 1
+      end
     end
   end
 end
