@@ -32,7 +32,7 @@ class DotFontTest < Test::Unit::TestCase
         scale = stub(:scale)
         color = stub(:color, :red => stub, :blue => stub, :green => stub)
         transparent = mock(:transparent)
-        tex = mock(:cache_texture")
+        tex = mock(:cache_texture)
         black = mock(:black)
         
         tex.expects(:fill).with(transparent)
