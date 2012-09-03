@@ -11,7 +11,7 @@ require 'dotgame/input'
 
 module DotGame
 
-VERSION = "0.0.7"
+VERSION = "0.0.8"
 
 StarRuby::Texture.module_eval do
   include Draw
