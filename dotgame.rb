@@ -3,6 +3,7 @@
 
 require 'starruby'
 require 'kconv'
+require 'dotgame/dotfont'
 
 module DotGame
 
@@ -168,7 +169,7 @@ end
 
 # 5x5 bitmap font by shinh (http://d.hatena.ne.jp/shinichiro_h/20060814#1155567183)
 # Licensed under the New BSD License.
-ShinhFont = [
+ShinhFont = DotFont.new [
     0x00000000, 0x00401084, 0x0000014a, 0x00afabea, 0x01fa7cbf, 0x01111111,
     0x0126c8a2, 0x00000084, 0x00821088, 0x00221082, 0x015711d5, 0x00427c84,
     0x00220000, 0x00007c00, 0x00400000, 0x00111110, 0x00e9d72e, 0x00421084,
@@ -186,47 +187,6 @@ ShinhFont = [
     0x00c23880, 0x0164a520, 0x00452800, 0x00aad400, 0x00a22800, 0x00111140,
     0x00e221c0, 0x00c2088c, 0x00421084, 0x00622086, 0x000022a2, 
 ]
-
-class << ShinhFont
-  def draw_letter(screen, x, y, i, scale, color)
-    unless 0 <= i && i < size
-      raise IndexError, "index #{i} out of font array"
-    end
-    
-    screen.render_texture font_cache, x, y, {
-      :src_width => 5,
-      :src_height => 5,
-      :src_x => i * 5,
-      :tone_red => color.red,
-      :tone_green => color.green,
-      :tone_blue => color.blue,
-      :scale_x => scale,
-      :scale_y => scale,
-    }
-  end
-  
-  def font_cache
-    @cache ||= make_cache
-  end
-  
-  def make_cache
-    tex = StarRuby::Texture.new(size * 5, 5)
-    tex.fill transparent
-    each_with_index do |chara, i|
-      plot_letter(tex, i * 5, 0, chara, black)
-    end
-    tex
-  end
-
-  def plot_letter(screen, x, y, letter, color)
-    5.times do |j|
-      5.times do |i|
-        screen[x + i, y + j] = color unless letter[0].zero?
-        letter >>= 1
-      end
-    end
-  end
-end
 
 # 全画面一気に描画する
 # 例:
