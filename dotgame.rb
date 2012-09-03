@@ -102,17 +102,19 @@ end
 #   image "ファイル名"
 #   image "ファイル名", 左上のX座標, 左上のY座標
 #   image "ファイル名", 左上のX座標, 左上のY座標, 倍率
+#   image "ファイル名", 左上のX座標, 左上のY座標, 横倍率, 縦倍率
 #   image "ファイル名", 左上のX座標, 左上のY座標, {オプション}
 #   
 # 例：
 #   image "neko.bmp"
 #   image "c:/tree.gif", 5, 5
 #   image "c:/face.png", 3, 3, 2
-def image(name, x=0, y=0, scale=nil)
-  if t = DotGame.get_texture(name)
-    opt = scale.is_a?(Hash) ? scale : { :scale_x => scale, :scale_y => scale } if scale
-    render_texture t, x, y, opt
+def image(name, x=0, y=0, scale_x=nil, scale_y=scale_x)
+  t = DotGame.get_texture(name) or return
+  if scale_x
+    opt = scale_x.is_a?(Hash) ? scale_x : { :scale_x => scale_x, :scale_y => scale_y }
   end
+  render_texture t, x, y, opt
 end
 
 # 英数字を書く
