@@ -482,11 +482,12 @@ if __FILE__ == $0
     end
     system "start #{script}"
   end
+
+  include DotGame
   
   begin
     r = catch(:dotgame_reload) do
-      include DotGame
-      Module.new.instance_eval { load script }
+      load script, true
       nil
     end
   rescue Interrupt
