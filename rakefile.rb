@@ -4,7 +4,7 @@ require 'rake/clean'
 def version
   @version ||= begin
     File.exist?('dotgame.rb') and
-    File.read('dotgame.rb') =~ /VERSION\s*=\s*"([^"]+)/ and
+    File.read('dotgame.rb') =~ /^\s*VERSION\s*=\s*"([^"]+)/ and
     $1 or "unknown"
   end
 end
