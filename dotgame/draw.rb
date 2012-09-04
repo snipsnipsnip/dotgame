@@ -1,3 +1,4 @@
+require 'dotgame/dotfont'
 
 module DotGame
   # 描画
@@ -17,8 +18,7 @@ module DotGame
     #   dot 10, 10, 50
     #   dot 10, 10, 50, 200, 50
     def dot(x, y, r=0, g=r, b=r, a=255)
-      color = r.is_a?(StarRuby::Color) ? r : StarRuby::Color.new(r, g, b, a)
-      render_pixel x, y, color
+      render_pixel x, y, Color(r, g, b, a)
     end
 
     # 線を引く
@@ -33,8 +33,7 @@ module DotGame
     # 例：
     #   line 10, 10, 50, 200, red
     def line(x1, y1, x2, y2, r=0, g=r, b=r, a=255)
-      color = r.is_a?(StarRuby::Color) ? r : StarRuby::Color.new(r, g, b, a)
-      render_line x1, y1, x2, y2, color
+      render_line x1, y1, x2, y2, Color(r, g, b, a)
     end
 
     # 四角形を書く
@@ -45,8 +44,7 @@ module DotGame
     # 例：
     #   square 10, 10, 5, 5, blue
     def square(x, y, w, h, r=0, g=r, b=r, a=255)
-      color = r.is_a?(StarRuby::Color) ? r : StarRuby::Color.new(r, g, b, a)
-      render_rect x, y, w, h, color
+      render_rect x, y, w, h, Color(r, g, b, a)
     end
 
     # ぬりつぶし
@@ -59,8 +57,7 @@ module DotGame
     # 例：
     #   bucket white
     def bucket(r=0, g=r, b=r, a=255)
-      color = r.is_a?(StarRuby::Color) ? r : StarRuby::Color.new(r, g, b, a)
-      fill(color)
+      fill Color(r, g, b, a)
     end
 
     # 画像を張り付ける
@@ -101,8 +98,8 @@ module DotGame
     #   text 100
     #   text "hoge"
     #   text "hoge", 5, 5
-    def text(msg, x=0, y=0, r=0, g=r, b=r, a=255)
-      color = r.is_a?(StarRuby::Color) ? r : StarRuby::Color.new(r, g, b, a)
+    def text(msg, x=0, y=0, r=0, scale=1, g=r, b=r, a=255)
+      color = Color(r, g, b, a)
       ix = x
       msg.to_s.each_byte do |c|
         if c == 10
