@@ -36,11 +36,11 @@ class DrawTest < Test::Unit::TestCase
           subject.text *args[0..i]
           
           assert_equal 4, @draw_letter_calls.size
-          @draw_letter_calls.each_with_index do |(screen, x, y, char, scale, color), i|
+          @draw_letter_calls.each_with_index.zip("hoge".bytes) do |((screen, x, y, char, scale, color), i), b|
             assert_equal subject, screen
             assert_equal 6 * i, x
             assert_equal 0, y
-            assert_equal "hoge"[i] - 32, char
+            assert_equal b - 32, char
             assert_equal 1, scale
             assert_equal @color, color
           end

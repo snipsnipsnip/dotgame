@@ -4,13 +4,13 @@ require 'rake/clean'
 def version
   @version ||= begin
     File.exist?('dotgame.rb') and
-    File.read('dotgame.rb') =~ /^\s*VERSION\s*=\s*"([^"]+)/ and
+    IO.read('dotgame.rb', {:encoding => 'binary'}) =~ /^\s*VERSION\s*=\s*"([^"]+)/ and
     $1 or "unknown"
   end
 end
 
 Rake::TestTask.new do |t|
-  t.libs << 'test'
+  t.libs << '.' << 'test'
   t.pattern = 'test/**/*_test.rb'
   t.verbose = false
 end
