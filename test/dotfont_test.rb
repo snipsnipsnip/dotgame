@@ -6,7 +6,7 @@ class DotFontTest < Test::Unit::TestCase
     context "with []" do
       subject { DotGame::DotFont.new([]) }
       should "fail" do
-        assert_raise(IndexError) do
+        assert_raises IndexError do
           subject.draw_letter(stub, stub, stub, 0, stub, stub)
         end
       end
@@ -16,11 +16,11 @@ class DotFontTest < Test::Unit::TestCase
       subject { DotGame::DotFont.new([0]) }
       
       should "fail on index other than 0" do
-        assert_raise(IndexError) do
+        assert_raises IndexError do
           subject.draw_letter(stub, stub, stub, -1, stub, stub)
         end
         
-        assert_raise(IndexError) do
+        assert_raises IndexError do
           subject.draw_letter(stub, stub, stub, 1, stub, stub)
         end
       end
