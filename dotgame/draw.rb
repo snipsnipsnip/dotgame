@@ -100,38 +100,12 @@ module DotGame
     #   text "hoge", 5, 5
     def text(msg, x=0, y=0, scale=1, r=0, g=r, b=r, a=255)
       color = Color(r, g, b, a)
-      ix = x
-      msg.to_s.each_byte do |c|
-        if c == 10
-          x = ix
-          y += 5 * scale + 1
-        else
-          c -= 32
-          ShinhFont.draw_letter(self, x, y, c, scale, color)
-          x += 5 * scale + 1
-        end
-      end
+      ShinhFont.draw_text(self, x, y, msg, scale, color)
     end
 
     # フチつきtext
     def textbold(msg, x=0, y=0, scale=1, inner=white, outer=black)
-      x += 1
-      y += 1
-      ix = x
-      msg.to_s.each_byte do |c|
-        if c == 10
-          x = ix
-          y += 6 * scale + 1
-        else
-          c -= 32
-          ShinhFont.draw_letter(self, x + 1, y, c, scale, outer)
-          ShinhFont.draw_letter(self, x - 1, y, c, scale, outer)
-          ShinhFont.draw_letter(self, x, y + 1, c, scale, outer)
-          ShinhFont.draw_letter(self, x, y - 1, c, scale, outer)
-          ShinhFont.draw_letter(self, x, y, c, scale, inner)
-          x += 7 * scale + 1
-        end
-      end
+      ShinhFont.draw_text_bold(self, x, y, msg, scale, inner_outer)
     end
 
     # 5x5 bitmap font by shinh (http://d.hatena.ne.jp/shinichiro_h/20060814#1155567183)

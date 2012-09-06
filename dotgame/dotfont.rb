@@ -4,7 +4,41 @@ module DotGame
     def initialize(arr)
       @font = arr
     end
-
+    
+    def draw_text(screen, x, y, msg, scale, color)
+      ix = x
+      msg.to_s.each_byte do |c|
+        if c == 10
+          x = ix
+          y += 5 * scale + 1
+        else
+          c -= 32
+          draw_letter(screen, x, y, c, scale, color)
+          x += 5 * scale + 1
+        end
+      end
+    end
+    
+    def draw_text_bold(screen, x, y, msg, scale, inner, outer)
+      x += 1
+      y += 1
+      ix = x
+      msg.to_s.each_byte do |c|
+        if c == 10
+          x = ix
+          y += 6 * scale + 1
+        else
+          c -= 32
+          ShinhFont.draw_letter(screen, x + 1, y, c, scale, outer)
+          ShinhFont.draw_letter(screen, x - 1, y, c, scale, outer)
+          ShinhFont.draw_letter(screen, x, y + 1, c, scale, outer)
+          ShinhFont.draw_letter(screen, x, y - 1, c, scale, outer)
+          ShinhFont.draw_letter(screen, x, y, c, scale, inner)
+          x += 7 * scale + 1
+        end
+      end
+    end
+    
     def draw_letter(screen, x, y, i, scale, color)
       unless 0 <= i && i < @font.size
         raise IndexError, "index #{i} out of font array"
