@@ -98,7 +98,7 @@ module DotGame
     #   text 100
     #   text "hoge"
     #   text "hoge", 5, 5
-    def text(msg, x=0, y=0, r=0, scale=1, g=r, b=r, a=255)
+    def text(msg, x=0, y=0, scale=1, r=0, g=r, b=r, a=255)
       color = Color(r, g, b, a)
       ix = x
       msg.to_s.each_byte do |c|
