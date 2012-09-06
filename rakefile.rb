@@ -15,7 +15,11 @@ Rake::TestTask.new do |t|
   t.verbose = false
 end
 
-file "dotgame.exe" => FileList['dotgame.exy', 'dotgame.rb', 'dotgame/**/*.rb'] do
+file "dotgame.exy" => FileList['dotgame.rb', 'dotgame/**/*.rb'] do
+  sh "mkexy dotgame.rb --help"
+end
+
+file "dotgame.exe" => 'dotgame.exy' do
   sh "exerb dotgame.exy"
   sh "upx dotgame.exe"
 end
@@ -46,7 +50,10 @@ file "dotgame-#{version}.zip" => %w[dotgame.exe] do
   end
 end
 
+desc "exerb"
 task "exe" => 'dotgame.exe'
+
+desc "zip"
 task "zip" => "dotgame-#{version}.zip"
 
 CLEAN.include 'dotgame.exe', FileList['dotgame-*.zip']
