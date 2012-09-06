@@ -164,6 +164,11 @@ end # module DotGame
 if __FILE__ == $0
   script = (ARGV + %w[main.rb main.txt]).find {|x| x && File.exist?(x) }
   
+  if ARGV.include?('--help')
+    warn "usage: #{File.basename $0} [script]"
+    exit
+  end
+  
   unless script
     script = 'main.txt'
     open(script, 'w') do |f|
