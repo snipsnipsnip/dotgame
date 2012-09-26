@@ -98,31 +98,23 @@ def make_texture(*args)
   StarRuby::Texture.new(*args)
 end
 
-def self.init(w=20, h=20, fps=30, opts=nil, &blk)
-  opts ||= {}
-  opts[:window_scale] ||= [600.0 / [w, h].max, 1].max
-  opts[:fps] ||= fps
-  opts[:width] ||= w
-  opts[:height] ||= h
-  
+def self.init
   @_textures = {}
   @keys = {:keyboard => [], :mouse => []}
   StarRuby::Input.gamepad_count.times {|i| @keys[[:gamepad, {:device_number => i}]] = [] }
   @keys_prev = @keys.dup
-  @options = opts
-  @main = blk
-  
-  raise ArgumentError, "main \202\314\202\240\202\306\202\311 {} \202\252\202\240\202\350\202\334\202\271\202\361" unless blk
 end
 
-def self.run
-  opts = @options.dup
+# 本体 #
+def main(w=20, h=20, fps=30, opts={}, &blk)
+  DotGame.init
+
+  opts[:window_scale] ||= [600.0 / [w, h].max, 1].max
+  opts[:fps] ||= fps
   opts[:cursor] = true unless opts.key?(:cursor)
-  title = opts[:title] || "F5キーでリロード - dotgame v#{DotGame::VERSION}"
-  title = title.to_s.toutf8
-  w, h = opts.values_at(:width, :height)
+  opts[:title] ||= "F5キーでリロード - dotgame v#{DotGame::VERSION}"
+  opts[:title] = opts[:title].to_s.toutf8
   bg = opts[:background] || DotGame._make_checkerboard(w, h) unless opts.key?(:bg)
-  main = @main
   
   StarRuby::Game.run(w, h, opts) do |game|
     DotGame.swap_keys
@@ -138,7 +130,7 @@ def self.run
       break
     end
     game.screen.render_texture(bg, 0, 0) if bg
-    main.call(game)
+    yield game
   end
 end
 
@@ -147,11 +139,6 @@ def self._make_checkerboard(w, h)
   bg.fill(white)
   bg.raster {|x,y| (x + y).odd? ? gray : white }
   bg
-end
-
-# 本体 #
-def main(*args, &blk)
-  DotGame.init(*args, &blk)
 end
 
 # int main() { ... } みたいに書けるようにするダミー関数
@@ -194,7 +181,6 @@ if __FILE__ == $0
   begin
     r = catch(:dotgame_reload) do
       load script, true
-      DotGame.run
       nil
     end
   rescue Interrupt
