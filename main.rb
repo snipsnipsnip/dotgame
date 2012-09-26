@@ -62,9 +62,10 @@ class ProblemQueue
         answer = i == current + 1 ? @answer : @prevanswer
         color = problem[3] == answer ? Color(0, 200, 0) : red
         text "#{problem[0..2]}=#{problem[3]}", 1, y + i * 6, 1, color
-      else
-        #text "???=", 1, y + i * 6, 1, black
+      elsif i == 1 || i == 0
         text "#{problem[0..2]}=", 1, y + i * 6, 1, black
+      else
+        text "???=?", 1, y + i * 6, 1, black
       end
     end
   end
@@ -112,18 +113,20 @@ def make_numkeys
   numkeys
 end
 
-back = 5
+back = 13
 queue = ProblemQueue.new(back)
-numkeys = make_numkeys
-
 total_count = -back
 correct_count = 0
+
+numkeys = make_numkeys
 
 main(31, (back + 2) * 6 - 3, 26) {
   queue.tick
   queue.draw
   
-  square 0, 7, screenw, (back - 1) * 6 - 1, white
+  (back - 1).times do |i|
+    square 0, 7 + i * 6, screenw, 6, i.odd? ? gray : white
+  end
   
   if answer = numkeys.get_pressed
     if total_count >= 0
