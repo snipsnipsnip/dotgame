@@ -79,11 +79,11 @@ def self.released?(key, device)
 end
 
 def screenw
-  screen.width
+  StarRuby::Game.current.screen.width
 end
 
 def screenh
-  screen.height
+  StarRuby::Game.current.screen.height
 end
 
 def window_scale
