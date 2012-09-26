@@ -30,6 +30,8 @@ class ProblemQueue
     @problems = enum_for(:each_problem).to_a
     @y = 0
     @answer = nil
+    
+    @q.unshift rand(@problems.size)
   end
   
   def tick
@@ -49,15 +51,16 @@ class ProblemQueue
     current = @back + (@y == 0 ? 1 : 0)
     
     @q.each_with_index do |problem_number, i|
+      problem = @problems[problem_number]
+      
       if i == current
         text "???=", 1, y + i * 6, 1, blue
+        #text "#{problem[0..2]}=#{problem[3]}", 1, y + i * 6, 1, blue
       elsif i == current + 1 || i == current + 2
         answer = i == current + 1 ? @answer : @prevanswer
-        problem = @problems[problem_number]
         color = problem[3] == answer ? Color(0, 200, 0) : red
         text "#{problem[0..2]}=#{problem[3]}", 1, y + i * 6, 1, color
       else
-        problem = @problems[problem_number]
         text "#{problem[0..2]}=", 1, y + i * 6, 1, black
       end
     end
@@ -66,11 +69,15 @@ class ProblemQueue
   def shift(answer)
     return if @y != 0
     
-    @y += 1 
+    @y += 1
+    
+    return if @q.size < @back + 2
+    
     @prevanwer = @answer
     @answer = answer
     
-    current_problem = @problems[@back + 1]
+    current_problem = @problems[@q[@back + 1]]
+    p [current_problem[3], answer]
     current_problem[3] == answer
   end
   
@@ -94,6 +101,7 @@ def make_numkeys
   
   def numkeys.get_pressed
     each_with_index {|v, i| return i if release?(v[0]) || release?(v[1]) }
+    return -1 if spacerelease? || enterrelease?
     nil
   end
   
@@ -104,22 +112,24 @@ back = 1
 queue = ProblemQueue.new(back)
 numkeys = make_numkeys
 
-total_count = 0
+total_count = -back
 correct_count = 0
 
-main(31, (back + 2) * 6 + 1, 30) {
+main(31, (back + 2) * 6 - 3, 30) {
   queue.tick
   queue.draw
   
   square 0, 7, screenw, screenh - 7 * 3 + 1, white
   
   if answer = numkeys.get_pressed
-    title "%d / %d (%.0f%%)" % [correct_count, total_count, correct_count / total_count.to_f * 100]
-    correct_count += 1 if queue.shift(answer)
+    if total_count >= 0
+      correct_count += 1 if queue.shift(answer)
+      
+      title "%d 問目回答中 (%d 問中 %d 問正解: 正解率 %.0f%%)" % [total_count + 1, total_count - back + 1, correct_count, correct_count.to_f * 100 / (total_count - back + 1)]
+    else
+      queue.shift(nil)
+    end
+
     total_count += 1
   end
 }
-
-#main(400, 400, 30, {:background => nil}) {
-#  image(t ||= tex(w, h))
-#}

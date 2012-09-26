@@ -6,8 +6,9 @@ module DotGame
     def self.define_color(name, r, g=r, b=r, a=255)
       color = StarRuby::Color.new(r, g, b, a)
       define_method(name) { color }
+      module_function name
     end
-
+    
     define_color :white, 255, 255, 255
     define_color :gray, 220, 220, 220
     define_color :black, 0, 0, 0
