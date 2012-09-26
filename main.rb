@@ -114,29 +114,42 @@ def make_numkeys
 end
 
 back = 13
-queue = ProblemQueue.new(back)
-total_count = -back
-correct_count = 0
-
 numkeys = make_numkeys
 
-main(31, (back + 2) * 6 - 3, 26) {
-  queue.tick
-  queue.draw
+begin
+  queue = ProblemQueue.new(back)
+  total_count = -back
+  correct_count = 0
+  rescale = false
   
-  (back - 1).times do |i|
-    square 0, 7 + i * 6, screenw, 6, i.odd? ? gray : white
-  end
-  
-  if answer = numkeys.get_pressed
-    if total_count >= 0
-      correct_count += 1 if queue.shift(answer)
-      
-      title "%d 問目回答中 (%d 問中 %d 問正解: 正解率 %.0f%%)" % [total_count + 1, total_count, correct_count, correct_count.to_f * 100 / total_count]
-    else
-      queue.shift(nil)
+  main(31, (back + 2) * 6 - 3, 26) {
+    queue.tick
+    queue.draw
+    
+    (back - 1).times do |i|
+      square 0, 7 + i * 6, screenw, 6, i.odd? ? gray : white
     end
+    
+    if release?(:divide) || release?(:multiply)
+      back += (release?(:divide) ? -1 : 0) + (release?(:multiply) ? 1 : 0)
+      back = 1 if back < 1
+      queue = ProblemQueue.new(back)
+      total_count = -back
+      correct_count = 0
+      rescale = true
+      break
+    end
+    
+    if answer = numkeys.get_pressed
+      if total_count >= 0
+        correct_count += 1 if queue.shift(answer)
+        
+        title "%d 問目回答中 (%d 問中 %d 問正解: 正解率 %.0f%%)" % [total_count + 1, total_count, correct_count, correct_count.to_f * 100 / total_count]
+      else
+        queue.shift(nil)
+      end
 
-    total_count += 1
-  end
-}
+      total_count += 1
+    end
+  }
+end while rescale
