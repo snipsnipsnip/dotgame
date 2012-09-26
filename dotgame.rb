@@ -184,12 +184,14 @@ if __FILE__ == $0
     end
     system "start #{script}"
   end
-
-  include Math
-  include DotGame
-  include DotGame::Colors
-  include DotGame::Sound
-  include DotGame::Input
+  
+  module Kernel
+    include Math
+    include DotGame
+    include DotGame::Colors
+    include DotGame::Sound
+    include DotGame::Input
+  end
   
   begin
     r = catch(:dotgame_reload) do
