@@ -2,7 +2,7 @@ module DotGame
   # 入力
   module Input
     # アルファベット各種
-    [:space, :enter, :escape, :left, :right, :up, :down, *'a'..'z'].each do |c|
+    [:space, :enter, :escape, :separator, :left, :right, :up, :down, *'a'..'z'].each do |c|
       s = c.to_sym
       define_method("#{c}?") { key? s }
       define_method("#{c}release?") { release? s }
