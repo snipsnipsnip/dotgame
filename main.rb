@@ -28,27 +28,29 @@ class ProblemQueue
     @back = back
     @q = []
     @problems = enum_for(:each_problem).to_a
-    @y = 0
     @answer = nil
+    @moving = false
+    @y = 0
     
     @q.unshift rand(@problems.size)
   end
   
   def tick
-    if @y != 0
-      @y = @y + 1
+    if @moving
+      @y += 1
       
       if @y == 7
         @q.pop unless @q.size < @back + 3
         @q.unshift rand(@problems.size)
         @y = 0
+        @moving = false
       end
     end
   end
   
   def draw
     y = @y - 5
-    current = @back + (@y == 0 ? 1 : 0)
+    current = @back + (@moving ? 0 : 1)
     
     @q.each_with_index do |problem_number, i|
       problem = @problems[problem_number]
@@ -61,15 +63,17 @@ class ProblemQueue
         color = problem[3] == answer ? Color(0, 200, 0) : red
         text "#{problem[0..2]}=#{problem[3]}", 1, y + i * 6, 1, color
       else
+        #text "???=", 1, y + i * 6, 1, black
         text "#{problem[0..2]}=", 1, y + i * 6, 1, black
       end
     end
   end
   
   def shift(answer)
-    return if @y != 0
+    return if @moving
     
-    @y += 1
+    @y = -1
+    @moving = true
     
     return if @q.size < @back + 2
     
@@ -101,31 +105,31 @@ def make_numkeys
   
   def numkeys.get_pressed
     each_with_index {|v, i| return i if release?(v[0]) || release?(v[1]) }
-    return -1 if spacerelease? || enterrelease?
+    return -1 if spacerelease? || enterrelease? || separatorrelease?
     nil
   end
   
   numkeys
 end
 
-back = 1
+back = 5
 queue = ProblemQueue.new(back)
 numkeys = make_numkeys
 
 total_count = -back
 correct_count = 0
 
-main(31, (back + 2) * 6 - 3, 30) {
+main(31, (back + 2) * 6 - 3, 26) {
   queue.tick
   queue.draw
   
-  square 0, 7, screenw, screenh - 7 * 3 + 1, white
+  square 0, 7, screenw, (back - 1) * 6 - 1, white
   
   if answer = numkeys.get_pressed
     if total_count >= 0
       correct_count += 1 if queue.shift(answer)
       
-      title "%d 問目回答中 (%d 問中 %d 問正解: 正解率 %.0f%%)" % [total_count + 1, total_count - back + 1, correct_count, correct_count.to_f * 100 / (total_count - back + 1)]
+      title "%d 問目回答中 (%d 問中 %d 問正解: 正解率 %.0f%%)" % [total_count + 1, total_count, correct_count, correct_count.to_f * 100 / total_count]
     else
       queue.shift(nil)
     end
