@@ -16,7 +16,11 @@ Rake::TestTask.new do |t|
 end
 
 file "dotgame.exy" => FileList['dotgame.rb', 'dotgame/**/*.rb'] do
-  sh "mkexy dotgame.rb --help"
+  additional_gems = %w[json restclient]
+  additional_gems.each {|g| require g }
+  path = $:.grep(/gems/).join(';').gsub('/', '\\')
+  requires = additional_gems.map {|g| "-r#{g}" }.join(' ')
+  sh %[mkexy -I"#{path}" #{requires} dotgame.rb --help]
 end
 
 file "dotgame.exe" => 'dotgame.exy' do
