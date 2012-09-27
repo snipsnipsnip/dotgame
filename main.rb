@@ -31,7 +31,8 @@ class ProblemQueue
     @answer = nil
     @moving = false
     @y = 0
-    
+    @shifted = 0
+
     @q.unshift rand(@problems.size)
   end
   
@@ -39,11 +40,12 @@ class ProblemQueue
     if @moving
       @y += 1
       
-      if @y == 7
+      if @y == 6
         @q.pop unless @q.size < @back + 3
         @q.unshift rand(@problems.size)
         @y = 0
         @moving = false
+        @shifted += 1
       end
     end
   end
@@ -68,6 +70,25 @@ class ProblemQueue
         text "???=?", 1, y + i * 6, 1, black
       end
     end
+    
+    return if @back <= 1
+    
+    if @shifted.odd?
+      even = white
+      odd = gray
+    else
+      even = gray
+      odd = white
+    end
+    
+    square 0, 7, screenw, 6 * (@back - 1) - 1, even
+    #square 0, 7, screenw, @y, odd if @moving
+
+    ((@back - 1) / 2).times do |i|
+      square 0, (i * 2 + 1) * 6 + 1 + @y, screenw, 6, odd
+    end
+
+    #square 0, (@back - 1) * 6 + @y, screenw, 6 - @y, odd if @back.odd?
   end
   
   def shift(answer)
@@ -113,7 +134,7 @@ def make_numkeys
   numkeys
 end
 
-back = 13
+back = 5
 numkeys = make_numkeys
 
 begin
@@ -125,10 +146,6 @@ begin
   main(31, (back + 2) * 6 - 3, 26) {
     queue.tick
     queue.draw
-    
-    (back - 1).times do |i|
-      square 0, 7 + i * 6, screenw, 6, i.odd? ? gray : white
-    end
     
     if release?(:divide) || release?(:multiply)
       back += (release?(:divide) ? -1 : 0) + (release?(:multiply) ? 1 : 0)
