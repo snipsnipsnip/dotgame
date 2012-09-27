@@ -77,9 +77,26 @@ module DotGame
     def image(name, x=0, y=0, scale_x=nil, scale_y=scale_x)
       t = DotGame.get_texture(name) or return
       if scale_x
-        opt = scale_x.is_a?(Hash) ? scale_x : { :scale_x => scale_x, :scale_y => scale_y }
+        if scale_x.is_a?(Hash)
+          opt = scale_x
+        else
+          opt = { :scale_x => scale_x, :scale_y => scale_y }
+        end
       end
       render_texture t, x, y, opt
+    end
+
+    # 画像を張り付ける
+    # フォルダ越しに指定する場合 \ ではなく / を使うこと
+    #
+    # 書式：
+    #   image3d "ファイル名", {オプション}
+    #   
+    # 例：
+    #   image3d "neko.bmp", {:blur => :background, :camera_height => 5}
+    def image3d(name, opt)
+      t = DotGame.get_texture(name) or return
+      render_in_perspective t, opt
     end
 
     # 英数字を書く
