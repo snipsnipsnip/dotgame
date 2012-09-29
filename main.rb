@@ -134,8 +134,26 @@ def make_numkeys
   numkeys
 end
 
+def make_backkeys
+  keymap = [
+    [%w[divide slash backslash openbrackets], -1],
+    [%w[multiply quotes closebrackets], 1],
+    [%w[pageup], 3],
+    [%w[pagedown], -3],
+  ]
+
+  backkeys = keymap.map {|keys, diff| keys.map {|key| [key.intern, diff] } }.flatten(1)
+
+  def backkeys.get_pressed
+    entry = find {|key, _| release? key } and entry[1]
+  end
+
+  backkeys
+end
+
 back = 5
 numkeys = make_numkeys
+backkeys = make_backkeys
 
 begin
   queue = ProblemQueue.new(back)
@@ -143,12 +161,12 @@ begin
   correct_count = 0
   rescale = false
   
-  main(31, (back + 2) * 6 - 3, 26) {
+  main(31, (back + 2) * 6 - 3, 26, {:title => "テンキーや数字キーで回答, Spaceでパス"}) {
     queue.tick
     queue.draw
     
-    if release?(:divide) || release?(:multiply)
-      back += (release?(:divide) ? -1 : 0) + (release?(:multiply) ? 1 : 0)
+    if diff = backkeys.get_pressed
+      back += diff
       back = 1 if back < 1
       queue = ProblemQueue.new(back)
       total_count = -back
