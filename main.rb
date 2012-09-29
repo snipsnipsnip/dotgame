@@ -31,7 +31,6 @@ class ProblemQueue
     @answer = nil
     @moving = false
     @y = 0
-    @shifted = 0
 
     @q.unshift rand(@problems.size)
   end
@@ -40,18 +39,16 @@ class ProblemQueue
     if @moving
       @y += 1
       
-      if @y == 6
+      if @y % 6 == 0
         @q.pop unless @q.size < @back + 3
         @q.unshift rand(@problems.size)
-        @y = 0
         @moving = false
-        @shifted += 1
       end
     end
   end
   
   def draw
-    y = @y - 5
+    y = @y % 6 - 5
     current = @back + (@moving ? 0 : 1)
     
     @q.each_with_index do |problem_number, i|
@@ -73,28 +70,16 @@ class ProblemQueue
     
     return if @back <= 1
     
-    if @shifted.odd?
-      even = white
-      odd = gray
-    else
-      even = gray
-      odd = white
-    end
+    y = @y % 12
     
-    square 0, 7, screenw, 6 * (@back - 1) - 1, even
-    #square 0, 7, screenw, @y, odd if @moving
-
-    ((@back - 1) / 2).times do |i|
-      square 0, (i * 2 + 1) * 6 + 1 + @y, screenw, 6, odd
-    end
-
-    #square 0, (@back - 1) * 6 + @y, screenw, 6 - @y, odd if @back.odd?
+    image tile, 0, 7 + y, {:src_height => tile.height - y}
+    image tile, 0, 7, {:src_y => tile.height - y}
   end
   
   def shift(answer)
     return if @moving
     
-    @y = -1
+    @y += 1
     @moving = true
     
     return if @q.size < @back + 2
@@ -103,11 +88,25 @@ class ProblemQueue
     @answer = answer
     
     current_problem = @problems[@q[@back + 1]]
-    p [current_problem[3], answer]
     current_problem[3] == answer
   end
   
   private
+  def tile
+    @tile ||= make_tile
+  end
+  
+  def make_tile
+    tile = make_texture(screenw, 6 * [@back - 1, 2].max - 1)
+    tile.fill white
+
+    ((@back - 1) / 2).times do |i|
+      tile.square 0, (i * 2 + 1) * 6, tile.width, 6, gray
+    end
+
+    tile
+  end
+  
   def each_problem
     [:+, :-].each do |op|
       (0..9).each do |a|
@@ -141,13 +140,13 @@ def make_backkeys
     [%w[pageup], 3],
     [%w[pagedown], -3],
   ]
-
+  
   backkeys = keymap.map {|keys, diff| keys.map {|key| [key.intern, diff] } }.flatten(1)
-
+  
   def backkeys.get_pressed
     entry = find {|key, _| release? key } and entry[1]
   end
-
+  
   backkeys
 end
 
