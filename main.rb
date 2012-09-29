@@ -68,18 +68,12 @@ class ProblemQueue
       end
     end
     
-    return if @back <= 1
-    
-    y = @y % 12
-    
-    image tile, 0, 7 + y, {:src_height => tile.height - y}
-    image tile, 0, 7, {:src_y => tile.height - y}
+    draw_curtain
   end
   
   def shift(answer)
     return if @moving
     
-    @y += 1
     @moving = true
     
     return if @q.size < @back + 2
@@ -92,18 +86,29 @@ class ProblemQueue
   end
   
   private
+  def draw_curtain
+    return if @back <= 1
+    
+    curtain_height = (@back - 1) * 6 - 1
+    d, m = curtain_height.divmod(6)
+    y = -@y % 12
+    
+    d.times do |i|
+      image tile, 0, 7 + i * 6, {:src_height => 6, :src_y => (y + i * 6) % 12}
+    end
+    
+    image tile, 0, 7 + d * 6, {:src_height => m, :src_y => (y + d * 6) % 12}
+  end
+  
   def tile
     @tile ||= make_tile
   end
   
   def make_tile
-    tile = make_texture(screenw, 6 * [@back - 1, 2].max - 1)
+    phase = 6
+    tile = make_texture(screenw, phase * 3)
     tile.fill white
-
-    ((@back - 1) / 2).times do |i|
-      tile.square 0, (i * 2 + 1) * 6, tile.width, 6, gray
-    end
-
+    tile.square 0, phase, tile.width, phase, gray
     tile
   end
   
