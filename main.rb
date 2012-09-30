@@ -155,7 +155,7 @@ def make_backkeys
   backkeys
 end
 
-back = 5
+back = 2
 numkeys = make_numkeys
 backkeys = make_backkeys
 
@@ -165,7 +165,7 @@ begin
   correct_count = 0
   rescale = false
   
-  main(31, (back + 2) * 6 - 3, 26, {:title => "テンキーや数字キーで回答, Spaceでパス"}) {
+  main(31, (back + 2) * 6 - 1, 26, {:title => "テンキーや数字キーで回答, Spaceでパス"}) {
     queue.tick
     queue.draw
     
