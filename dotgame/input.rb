@@ -4,8 +4,8 @@ module DotGame
     # アルファベット各種
     [:space, :enter, :escape, :separator, :left, :right, :up, :down, *'a'..'z'].each do |c|
       s = c.to_sym
-      define_method("#{c}?") { key? s }
-      define_method("#{c}release?") { release? s }
+      define_method("#{c}?") {|*args| key?(s, :keyboard, *args) }
+      define_method("#{c}release?") { release?(s, :keyboard) }
     end
 
     # マウス
@@ -50,8 +50,8 @@ module DotGame
     #   if key?(:z)
     #     # Zボタン押してる時の処理
     #   end
-    def key?(key, device=:keyboard)
-      DotGame.pressed?(key, device)
+    def key?(key, device=:keyboard, interval=nil)
+      DotGame.pressed?(key, device, interval)
     end
 
     # キーが放された瞬間ならtrue、でなければfalse

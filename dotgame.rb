@@ -70,8 +70,12 @@ def self.swap_keys
   @keys.each_key {|k| @keys[k] = StarRuby::Input.keys(*k) }
 end
 
-def self.pressed?(key, device)
-  @keys[device].include?(key)
+def self.pressed?(key, device, interval)
+  if interval
+    StarRuby::Input.keys(device, {:duration => 1, :delay => interval, :interval => interval}).include?(key)
+  else
+    @keys[device].include?(key)
+  end
 end
 
 def self.released?(key, device)
