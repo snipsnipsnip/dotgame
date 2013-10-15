@@ -3,9 +3,9 @@ require 'rake/clean'
 
 def version
   @version ||= begin
-    File.exist?('dotgame.rb') and
-    File.read('dotgame.rb') =~ /^\s*VERSION\s*=\s*"([^"]+)/ and
-    $1 or "unknown"
+    `git describe --tags --always --dirty --long`.strip
+  rescue
+    'unknown'
   end
 end
 
@@ -14,6 +14,16 @@ Rake::TestTask.new do |t|
   t.pattern = 'test/**/*_test.rb'
   t.verbose = false
 end
+
+file "dotgame/version.rb" do |t|
+  File.open(t.name, "w") do |f|
+    f.puts "module DotGame"
+    f.puts "  VERSION = '#{version}'"
+    f.puts "end"
+  end
+end
+
+file "dotgame.rb" => "dotgame/version.rb"
 
 file "dotgame.exy" => FileList['dotgame.rb', 'dotgame/**/*.rb'] do
   sh "mkexy dotgame.rb --help"
@@ -56,7 +66,7 @@ task "exe" => 'dotgame.exe'
 desc "zip"
 task "zip" => "dotgame-#{version}.zip"
 
-CLEAN.include 'dotgame.exe', FileList['dotgame-*.zip']
+CLEAN.include FileList['dotgame.exe', 'dotgame-*.zip', 'dotgame/version.rb']
 
 desc 'Default: run tests'
 task :default => [:test]
