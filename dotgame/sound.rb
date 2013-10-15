@@ -1,6 +1,8 @@
 module DotGame
   # 音
   module Sound
+    module_function
+  
     # 効果音を鳴らす
     # 数値を指定すると再生を止める
     #
