@@ -4,7 +4,9 @@ require 'rake/clean'
 def version
   @version ||= begin
     `git describe --tags --always --dirty --long`.strip
-  rescue
+  rescue Errno::ENOENT
+    'non-git'
+  rescue Exception
     'unknown'
   end
 end
@@ -15,7 +17,7 @@ Rake::TestTask.new do |t|
   t.verbose = false
 end
 
-file "dotgame/version.rb" do |t|
+file "dotgame/version.rb" => ".git" do |t|
   File.open(t.name, "w") do |f|
     f.puts "module DotGame"
     f.puts "  VERSION = '#{version}'"
@@ -26,7 +28,8 @@ end
 file "dotgame.rb" => "dotgame/version.rb"
 
 file "dotgame.exy" => FileList['dotgame.rb', 'dotgame/**/*.rb'] do
-  sh "mkexy dotgame.rb --help"
+  opts = "-rset -rweakref"
+  sh "mkexy #{opts} dotgame.rb --help"
 end
 
 file "dotgame.exe" => 'dotgame.exy' do
