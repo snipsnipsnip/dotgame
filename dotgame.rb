@@ -9,9 +9,12 @@ require 'dotgame/draw'
 require 'dotgame/sound'
 require 'dotgame/input'
 
-module DotGame
+begin
+  require 'dotgame/version'
+rescue LoadError
+end
 
-VERSION = "0.0.8"
+module DotGame
 
 StarRuby::Texture.module_eval do
   include Draw
@@ -138,41 +141,49 @@ def self.run
       break
     end
     game.screen.render_texture(bg, 0, 0) if bg
-    main.call(game)
+    main.call
   end
 end
 
 def self._make_checkerboard(w, h)
-  bg = make_texture(w, h)
-  bg.fill(white)
+  bg = StarRuby::Texture.new(w, h)
   bg.raster {|x,y| (x + y).odd? ? gray : white }
   bg
 end
 
-# 本体 #
-def main(*args, &blk)
-  DotGame.init(*args, &blk)
-end
-
-# int main() { ... } みたいに書けるようにするダミー関数
-def int(*)
-  warn ":p"
+module Mixin
+  include ::Math
+  include ::DotGame
+  include ::DotGame::Colors
+  include ::DotGame::Sound
+  include ::DotGame::Input
 end
 
 end # module DotGame
 
 if __FILE__ == $0
+  puts "DotGame #{DotGame::VERSION if defined?(DotGame::VERSION)}"
+
   script = (ARGV + %w[main.rb main.txt]).find {|x| x && File.exist?(x) }
   
   if ARGV.include?('--help')
     warn "usage: #{File.basename $0} [script]"
     exit
   end
+
+  # 本体 #
+  def self.main(*args, &blk)
+    DotGame.init(*args, &blk)
+  end
+
+  # int main() { ... } みたいに書けるようにするダミー関数
+  def self.int(*)
+  end
   
   unless script
     script = 'main.txt'
     open(script, 'w') do |f|
-      f.puts "# dotgame v#{DotGame::VERSION}"
+      f.puts "# dotgame v#{DotGame::VERSION if defined?(DotGame::VERSION)}"
       f.puts "# https://gist.github.com/962107"
       f.puts
       f.puts 'main() {'
@@ -185,13 +196,7 @@ if __FILE__ == $0
     system "start #{script}"
   end
   
-  module Kernel
-    include Math
-    include DotGame
-    include DotGame::Colors
-    include DotGame::Sound
-    include DotGame::Input
-  end
+  include DotGame::Mixin
   
   begin
     r = catch(:dotgame_reload) do
