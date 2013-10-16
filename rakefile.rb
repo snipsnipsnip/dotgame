@@ -31,7 +31,6 @@ end
 
 file "dotgame.exe" => 'dotgame.exy' do
   sh "exerb dotgame.exy"
-  sh "upx dotgame.exe"
 end
 
 file "dotgame-#{version}.zip" => %w[dotgame.exe] do
